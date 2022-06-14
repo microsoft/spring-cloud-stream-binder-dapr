@@ -2,7 +2,8 @@
 
 ## Overview
 
-This project implements a Binder called "Spring Cloud Stream Binder for Dapr" based on the Spring CloudStream framework. With this native integration, Spring Cloud Stream applications can use the coding style of springcloudstream's existing framework to send and receive messages directly using the Dapr API.
+This project implements a Binder called "Spring Cloud Stream Binder for Dapr" based on the Spring Cloud Stream framework. With this native integration, Spring Cloud Stream applications can use the coding style of Spring Cloud Stream's existing framework to send and receive messages.
+
 
 ## Usage
 
@@ -17,9 +18,9 @@ This project implements a Binder called "Spring Cloud Stream Binder for Dapr" ba
 
 2. Update configuration
 
-If the project has previously used message oriented middleware, you only need to remove the middleware configuration and keep the spring cloud stream configuration.
+If the project has previously used message oriented middleware, you only need to remove the middleware configuration and keep the Spring Cloud Stream configuration.
 
-If the project has not used message oriented middleware before, you only need to add the configuration related to messaging in spring cloud stream.
+If the project has not used message oriented middleware before, you only need to add the configuration related to messaging in Spring Cloud Stream.
 ```
 spring:
   cloud:
