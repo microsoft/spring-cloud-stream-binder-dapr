@@ -1,0 +1,2 @@
+daprBinder:\
+com.azure.spring.cloud.stream.binder.dapr.config.DaprMessageBinderConfiguration

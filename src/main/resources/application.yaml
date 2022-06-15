@@ -1,0 +1,8 @@
+spring:
+  cloud:
+    stream:
+      function:
+        definition: consume;supply
+      poller:
+        fixed-delay: 1000
+        initial-delay: 0
