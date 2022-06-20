@@ -1,0 +1,6 @@
+^\Q/*\E$
+^\Q * Source code recreated from a .class file by IntelliJ IDEA\E$
+^\Q * (powered by FernFlower decompiler)\E$
+^\Q */\E$
+^$
+^.*$
