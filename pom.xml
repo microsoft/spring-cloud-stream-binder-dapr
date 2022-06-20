@@ -6,11 +6,7 @@
 
     <groupId>com.azure.spring</groupId>
     <artifactId>spring-cloud-stream-binder-dapr</artifactId>
-	<packaging>pom</packaging>
 	<version>1.0-SNAPSHOT</version>
-	<modules>
-		<module>samples/spring-cloud-stream-binder-dapr-sample</module>
-	</modules>
 
 	<name>Spring Cloud Stream Binder For Dapr</name>
     <description>Implement a binder to integrate Spring Cloud Stream and Dapr</description>
@@ -31,13 +27,17 @@
         <grpc.spring.boot.starter.version>2.13.1.RELEASE</grpc.spring.boot.starter.version>
         <spring.cloud.stream.version>3.2.4</spring.cloud.stream.version>
         <lombok.version>1.18.22</lombok.version>
-        <dapr.sdk.autogen.version>1.5.0</dapr.sdk.autogen.version>
+        <dapr.sdk.version>1.5.0</dapr.sdk.version>
         <maven-checkstyle-plugin.failsOnError>true</maven-checkstyle-plugin.failsOnError>
         <maven-checkstyle-plugin.failsOnViolation>true</maven-checkstyle-plugin.failsOnViolation>
         <maven-checkstyle-plugin.includeTestSourceDirectory>true</maven-checkstyle-plugin.includeTestSourceDirectory>
 		<checkstyle.suppressions.file>
 			https://raw.githubusercontent.com/spring-cloud/spring-cloud-build/master/spring-cloud-build-tools/src/checkstyle/checkstyle-suppressions.xml
 		</checkstyle.suppressions.file>
+		<flatten.maven.plugin.version>1.2.5</flatten.maven.plugin.version>
+		<spring.javaformat.maven.plugin.version>0.0.29</spring.javaformat.maven.plugin.version>
+		<maven.checkstyle.plugin.version>3.1.2</maven.checkstyle.plugin.version>
+		<spring.boot.maven.plugin.version>2.7.0</spring.boot.maven.plugin.version>
 	</properties>
 
     <dependencies>
@@ -45,7 +45,7 @@
         <dependency>
             <groupId>io.dapr</groupId>
             <artifactId>dapr-sdk</artifactId>
-            <version>1.5.0</version>
+            <version>${dapr.sdk.version}</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -75,18 +75,21 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>flatten-maven-plugin</artifactId>
-                <version>1.2.5</version>
+                <version>${flatten.maven.plugin.version}</version>
             </plugin>
             <plugin>
                 <groupId>io.spring.javaformat</groupId>
                 <artifactId>spring-javaformat-maven-plugin</artifactId>
-				<version>0.0.29</version>
+				<version>${spring.javaformat.maven.plugin.version}</version>
             </plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-checkstyle-plugin</artifactId>
-				<version>3.1.2</version>
+				<version>${maven.checkstyle.plugin.version}</version>
 				<configuration>
+					<configLocation>src/main/resources/checkstyle.xml</configLocation>
+					<suppressionsLocation>/src/main/resources/checkstyle-suppressions.xml</suppressionsLocation>
+					<headerLocation>src/main/resources/checkstyle-header.txt</headerLocation>
 					<propertyExpansion>
 						checkstyle.build.directory=${project.build.directory}
 						checkstyle.suppressions.file=${checkstyle.suppressions.file}
@@ -103,7 +106,7 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-				<version>2.7.0</version>
+				<version>${spring.boot.maven.plugin.version}</version>
 			</plugin>
         </plugins>
     </build>
