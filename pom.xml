@@ -8,12 +8,33 @@
     <artifactId>spring-cloud-stream-binder-dapr</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <name>Spring Cloud Stream Binder For Dapr</name>
+    <description>Implement a binder to integrate Spring Cloud Stream and Dapr</description>
+
+	<licenses>
+		<license>
+			<name>The MIT License (MIT)</name>
+			<url>http://opensource.org/licenses/MIT</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <java.version>11</java.version>
         <grpc.version>1.42.2</grpc.version>
-    </properties>
+        <grpc.spring.boot.starter.version>2.13.1.RELEASE</grpc.spring.boot.starter.version>
+        <spring.cloud.stream.version>3.2.4</spring.cloud.stream.version>
+        <lombok.version>1.18.22</lombok.version>
+        <dapr.sdk.autogen.version>1.5.0</dapr.sdk.autogen.version>
+        <maven-checkstyle-plugin.failsOnError>true</maven-checkstyle-plugin.failsOnError>
+        <maven-checkstyle-plugin.failsOnViolation>true</maven-checkstyle-plugin.failsOnViolation>
+        <maven-checkstyle-plugin.includeTestSourceDirectory>true</maven-checkstyle-plugin.includeTestSourceDirectory>
+		<checkstyle.suppressions.file>
+			https://raw.githubusercontent.com/spring-cloud/spring-cloud-build/master/spring-cloud-build-tools/src/checkstyle/checkstyle-suppressions.xml
+		</checkstyle.suppressions.file>
+	</properties>
 
     <dependencies>
         <dependency>
@@ -24,23 +45,57 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.22</version>
+            <version>${lombok.version}</version>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-stream</artifactId>
-            <version>3.2.4</version>
+            <version>${spring.cloud.stream.version}</version>
         </dependency>
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>../src/main/resources</directory>
+                <targetPath>META-INF</targetPath>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+        </resources>
+
         <plugins>
             <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>2.6.4</version>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>flatten-maven-plugin</artifactId>
+                <version>1.2.5</version>
             </plugin>
+            <plugin>
+                <groupId>io.spring.javaformat</groupId>
+                <artifactId>spring-javaformat-maven-plugin</artifactId>
+            </plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<configuration>
+					<configLocation>src/main/resources/checkstyle.xml</configLocation>
+					<suppressionsLocation>/src/main/resources/checkstyle-suppressions.xml</suppressionsLocation>
+					<headerLocation>src/main/resources/checkstyle-header.txt</headerLocation>
+					<propertyExpansion>
+						checkstyle.build.directory=${project.build.directory}
+						checkstyle.suppressions.file=${checkstyle.suppressions.file}
+						checkstyle.additional.suppressions.file=/src/main/resources/checkstyle-suppressions.xml
+					</propertyExpansion>
+					<encoding>UTF-8</encoding>
+					<consoleOutput>true</consoleOutput>
+					<includeTestSourceDirectory>true</includeTestSourceDirectory>
+					<linkXRef>true</linkXRef>
+					<failsOnError>true</failsOnError>
+					<failOnViolation>true</failOnViolation>
+				</configuration>
+			</plugin>
         </plugins>
     </build>
 
