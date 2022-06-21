@@ -65,3 +65,8 @@ public Consumer<Message<String>> consume() {
     };
 }
 ```
+
+## Samples
+
+Please refer to [here](https://github.com/dapr/quickstarts/tree/master/pub_sub/java/sdk#run-java-message-subscriber-app-with-dapr)
+to run a sample.
