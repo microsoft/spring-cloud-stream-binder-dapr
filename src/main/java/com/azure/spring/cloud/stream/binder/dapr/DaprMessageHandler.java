@@ -18,27 +18,41 @@ import reactor.core.publisher.MonoSink;
 
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageHandler;
-import org.springframework.messaging.MessagingException;
 
+/**
+ * The {@link DaprMessageHandler} wraps a {@link DaprGrpc.DaprStub} to publish events.
+ */
 public class DaprMessageHandler implements MessageHandler {
 
-	private DaprGrpc.DaprStub asyncStub;
-
-	protected static final ObjectMapper OBJECT_MAPPER = new ObjectMapper()
+	private DaprGrpc.DaprStub daprStub;
+	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper()
 			.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 			.setSerializationInclusion(JsonInclude.Include.NON_NULL);
 
-	DaprMessageHandler(DaprGrpc.DaprStub asyncStub) {
-		this.asyncStub = asyncStub;
+	/**
+	 * Construct a {@link DaprMessageHandler} with {@link DaprGrpc.DaprStub}.
+	 *
+	 * @param daprStub the dapr grpc stub
+	 */
+	DaprMessageHandler(DaprGrpc.DaprStub daprStub) {
+		this.daprStub = daprStub;
 	}
 
 	@Override
-	public void handleMessage(Message<?> message) throws MessagingException {
-		String TOPIC_NAME = "orders";
-		String PUBSUB_NAME = "orderpubsub";
+	public void handleMessage(Message<?> message) {
+		String TOPIC_NAME = "que";
+		String PUBSUB_NAME = "servicebus-pubsub";
 		this.publishEvent(PUBSUB_NAME, TOPIC_NAME, message.getPayload()).block();
 	}
 
+	/**
+	 * Publish event to specified topic of specified pubsub.
+	 *
+	 * @param pubsub the pubsub component name
+	 * @param topic	the topic
+	 * @param data the data
+	 * @return Mono
+	 */
 	private Mono<Void> publishEvent(String pubsub, String topic, Object data) {
 		try {
 			DaprProtos.PublishEventRequest.Builder envelopeBuilder = DaprProtos.PublishEventRequest.newBuilder()
@@ -49,7 +63,7 @@ public class DaprMessageHandler implements MessageHandler {
 			return Mono.subscriberContext().flatMap(
 					context ->
 							this.<Empty>createMono(
-									it -> asyncStub.publishEvent(envelopeBuilder.build(), it)
+									it -> daprStub.publishEvent(envelopeBuilder.build(), it)
 							)
 			).then();
 		}

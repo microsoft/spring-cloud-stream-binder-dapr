@@ -17,11 +17,21 @@ import org.springframework.integration.core.MessageProducer;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHandler;
 
-public class DaprMessageChannelBinder
-		extends AbstractMessageChannelBinder<ConsumerProperties,
+/**
+ * {@link DaprMessageChannelBinder} extend the AbstractMessageChannelBinder class.
+ * Providing the required constructors and overriding the inherited abstract methods.
+ */
+public class DaprMessageChannelBinder extends
+		AbstractMessageChannelBinder<ConsumerProperties,
 		ProducerProperties,
 		DaprMessageBinderProvisioner> {
 
+	/**
+	 * Construct a {@link DaprMessageChannelBinder} with the specified headers to embed and {@link DaprMessageBinderProvisioner}.
+	 *
+	 * @param headersToEmbed the headers to enbed
+	 * @param provisioningProvider the provisioning provider
+	 */
 	public DaprMessageChannelBinder(String[] headersToEmbed,
 			DaprMessageBinderProvisioner provisioningProvider) {
 		super(headersToEmbed, provisioningProvider);
@@ -30,19 +40,16 @@ public class DaprMessageChannelBinder
 	@Override
 	protected MessageHandler createProducerMessageHandler(ProducerDestination destination,
 			ProducerProperties producerProperties,
-			MessageChannel errorChannel) throws Exception {
-		return new DaprMessageHandler(buildDaprGrpcStub());
+			MessageChannel errorChannel) {
+		ManagedChannel channel = ManagedChannelBuilder.forAddress(
+				"127.0.0.1", 50001).usePlaintext().build();
+		DaprGrpc.DaprStub daprStub = DaprGrpc.newStub(channel);
+		return new DaprMessageHandler(daprStub);
 	}
 
 	@Override
 	protected MessageProducer createConsumerEndpoint(ConsumerDestination destination, String group,
 			ConsumerProperties properties) throws Exception {
 		return new DaprMessageProducer();
-	}
-
-	private DaprGrpc.DaprStub buildDaprGrpcStub() {
-		ManagedChannel channel = ManagedChannelBuilder.forAddress(
-					"127.0.0.1", 50001).usePlaintext().build();
-		return DaprGrpc.newStub(channel);
 	}
 }

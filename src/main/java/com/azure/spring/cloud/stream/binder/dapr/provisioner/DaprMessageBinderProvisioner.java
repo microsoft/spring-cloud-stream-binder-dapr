@@ -10,6 +10,9 @@ import org.springframework.cloud.stream.provisioning.ProducerDestination;
 import org.springframework.cloud.stream.provisioning.ProvisioningException;
 import org.springframework.cloud.stream.provisioning.ProvisioningProvider;
 
+/**
+ * The {@link DaprMessageBinderProvisioner} is responsible for the provisioning of consumer and producer destinations.
+ */
 public class DaprMessageBinderProvisioner implements ProvisioningProvider<ConsumerProperties, ProducerProperties> {
 
 	@Override
