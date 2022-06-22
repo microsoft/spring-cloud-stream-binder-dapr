@@ -36,9 +36,9 @@ spring:
         definition: consume;supply
       bindings:
         consume-in-0:
-          destination: ${AZURE_DAPR_NAME}
+          destination: ${AZURE_EVENTHUBS_NAME}
         supply-out-0:
-          destination: ${AZURE_DAPR_NAME} # same as the above destination
+          destination: ${AZURE_EVENTHUBS_NAME} # same as the above destination
       poller:
         initial-delay: 0
         fixed-delay: 1000
@@ -68,5 +68,5 @@ public Consumer<Message<String>> consume() {
 
 ## Samples
 
-Please refer to [here](https://github.com/dapr/quickstarts/tree/master/pub_sub/java/sdk#run-java-message-subscriber-app-with-dapr)
+Please refer to [here](https://github.com/MouMangTai/spring-cloud-stream-binder-dapr-sample)
 to run a sample.
