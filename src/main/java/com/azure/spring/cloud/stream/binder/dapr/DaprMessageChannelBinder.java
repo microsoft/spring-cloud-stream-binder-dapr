@@ -4,7 +4,6 @@
 package com.azure.spring.cloud.stream.binder.dapr;
 
 import com.azure.spring.cloud.stream.binder.dapr.provisioner.DaprMessageBinderProvisioner;
-
 import io.dapr.v1.DaprGrpc;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;

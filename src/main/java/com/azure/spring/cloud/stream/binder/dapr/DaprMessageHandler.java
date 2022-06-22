@@ -3,8 +3,8 @@
 
 package com.azure.spring.cloud.stream.binder.dapr;
 
-
 import java.util.function.Consumer;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,6 +15,7 @@ import io.dapr.v1.DaprProtos;
 import io.grpc.stub.StreamObserver;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.MonoSink;
+
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageHandler;
 import org.springframework.messaging.MessagingException;
