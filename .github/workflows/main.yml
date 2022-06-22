@@ -34,10 +34,6 @@ jobs:
         run: |
           echo Add other actions to build,
           echo test, and deploy your project.
-         
-      # Run command "mvn checkstyle:check"
-      - name: Checkstyle
-        run: mvn checkstyle:check
       
       # Run command "mvn clean install"
       - name: Run mvn clean install
