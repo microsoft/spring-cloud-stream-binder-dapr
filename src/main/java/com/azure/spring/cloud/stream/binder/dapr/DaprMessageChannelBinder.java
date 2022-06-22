@@ -1,11 +1,13 @@
-/*
- * Source code recreated from a .class file by IntelliJ IDEA
- * (powered by FernFlower decompiler)
- */
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 package com.azure.spring.cloud.stream.binder.dapr;
 
 import com.azure.spring.cloud.stream.binder.dapr.provisioner.DaprMessageBinderProvisioner;
+
+import io.dapr.v1.DaprGrpc;
+import io.grpc.ManagedChannel;
+import io.grpc.ManagedChannelBuilder;
 
 import org.springframework.cloud.stream.binder.AbstractMessageChannelBinder;
 import org.springframework.cloud.stream.binder.ConsumerProperties;
@@ -30,7 +32,7 @@ public class DaprMessageChannelBinder
 	protected MessageHandler createProducerMessageHandler(ProducerDestination destination,
 			ProducerProperties producerProperties,
 			MessageChannel errorChannel) throws Exception {
-		return new DaprMessageHandler();
+		return new DaprMessageHandler(buildDaprGrpcStub());
 	}
 
 	@Override
@@ -39,4 +41,9 @@ public class DaprMessageChannelBinder
 		return new DaprMessageProducer();
 	}
 
+	private DaprGrpc.DaprStub buildDaprGrpcStub() {
+		ManagedChannel channel = ManagedChannelBuilder.forAddress(
+					"127.0.0.1", 50001).usePlaintext().build();
+		return DaprGrpc.newStub(channel);
+	}
 }

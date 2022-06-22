@@ -41,12 +41,11 @@
 	</properties>
 
     <dependencies>
-
-        <dependency>
-            <groupId>io.dapr</groupId>
-            <artifactId>dapr-sdk</artifactId>
-            <version>${dapr.sdk.version}</version>
-        </dependency>
+		<dependency>
+			<groupId>io.dapr</groupId>
+			<artifactId>dapr-sdk-autogen</artifactId>
+			<version>${dapr.sdk.version}</version>
+		</dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
