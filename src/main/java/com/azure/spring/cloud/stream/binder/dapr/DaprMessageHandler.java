@@ -40,8 +40,8 @@ public class DaprMessageHandler implements MessageHandler {
 
 	@Override
 	public void handleMessage(Message<?> message) {
-		String TOPIC_NAME = "que";
-		String PUBSUB_NAME = "servicebus-pubsub";
+		String TOPIC_NAME = "topic";
+		String PUBSUB_NAME = "pubsub";
 		this.publishEvent(PUBSUB_NAME, TOPIC_NAME, message.getPayload()).block();
 	}
 
