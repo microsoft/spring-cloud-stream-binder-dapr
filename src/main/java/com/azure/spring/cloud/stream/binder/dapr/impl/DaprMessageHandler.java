@@ -157,7 +157,6 @@ public class DaprMessageHandler extends AbstractMessageProducingHandler {
 			@Override
 			public void onCompleted() {
 				sink.success();
-				LOGGER.info("");
 			}
 		};
 	}
