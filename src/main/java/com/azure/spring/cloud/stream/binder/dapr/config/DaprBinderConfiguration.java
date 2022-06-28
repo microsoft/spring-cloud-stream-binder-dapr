@@ -21,18 +21,31 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties({DaprExtendedBindingProperties.class})
 public class DaprBinderConfiguration {
 
+	/**
+	 * Declare {@link DaprBinderProvisioner} bean.
+	 *
+	 * @return the {@link DaprBinderProvisioner} bean.
+	 */
 	@Bean
 	@ConditionalOnMissingBean
 	public DaprBinderProvisioner daprBinderProvisioner() {
 		return new DaprBinderProvisioner();
 	}
 
+	/**
+	 * Declare {@link DaprMessageChannelBinder} bean.
+	 *
+	 * @param daprBinderProvisioner the dapr binder provisioner.
+	 * @param daprExtendedBindingProperties the dapr extended binding properties.
+	 *
+	 * @return the {@link DaprMessageChannelBinder} bean.
+	 */
 	@Bean
 	@ConditionalOnMissingBean
 	public DaprMessageChannelBinder daprMessageChannelBinder(DaprBinderProvisioner daprBinderProvisioner,
-			DaprExtendedBindingProperties bindingProperties) {
+			DaprExtendedBindingProperties daprExtendedBindingProperties) {
 		DaprMessageChannelBinder daprMessageChannelBinder = new DaprMessageChannelBinder(null, daprBinderProvisioner);
-		daprMessageChannelBinder.setBindingProperties(bindingProperties);
+		daprMessageChannelBinder.setBindingProperties(daprExtendedBindingProperties);
 		return daprMessageChannelBinder;
 	}
 }

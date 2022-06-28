@@ -50,17 +50,26 @@ public class DaprExtendedBindingProperties implements
 	}
 
 	@Override
-	public Map<String, ?> getBindings() {
-		return this.bindings;
-	}
-
-	public void setBindings(Map<String, DaprBindingProperties> bindings) {
-		this.bindings = bindings;
-	}
-
-	@Override
 	public String getDefaultsPrefix() {
 		return DEFAULTS_PREFIX;
 	}
 
+	/**
+	 * Get bindings.
+	 *
+	 * @return bindings the bindings
+	 */
+	@Override
+	public Map<String, ?> getBindings() {
+		return this.bindings;
+	}
+
+	/**
+	 * Set bindings.
+	 *
+	 * @param bindings the bindings
+	 */
+	public void setBindings(Map<String, DaprBindingProperties> bindings) {
+		this.bindings = bindings;
+	}
 }
