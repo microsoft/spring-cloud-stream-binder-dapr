@@ -54,6 +54,7 @@ public class DaprMessageChannelBinder extends
 		Assert.notNull(getDaprStub(producerProperties.getExtension().getSidecarIp(), producerProperties.getExtension().getGrpcPort()), "daprStub can't be null when create a producer");
 		DaprMessageHandler daprMessageHandler = new DaprMessageHandler(destination.getName(),
 				producerProperties.getExtension().getPubsubName(), this.daprStub);
+		daprMessageHandler.setMetadata(producerProperties.getExtension().getMetadata());
 		daprMessageHandler.setSync(producerProperties.getExtension().isSync());
 		daprMessageHandler.setSendTimeout(producerProperties.getExtension().getSendTimeout().toMillis());
 		daprMessageHandler.setBeanFactory(getBeanFactory());

@@ -3,7 +3,6 @@
 
 package com.azure.spring.cloud.stream.binder.dapr.properties;
 
-
 import java.time.Duration;
 
 import com.azure.spring.cloud.stream.binder.dapr.DaprMessageChannelBinder;
@@ -31,7 +30,9 @@ public class DaprBinderPropertiesTests {
 						"spring.cloud.stream.dapr.bindings.input.producer.sidecar-ip=127.0.0.2",
 						"spring.cloud.stream.dapr.bindings.input.producer.grpc-port=50000",
 						"spring.cloud.stream.dapr.bindings.input.producer.send-timeout=5000",
-						"spring.cloud.stream.dapr.bindings.input.producer.content-type=fake-content-type"
+						"spring.cloud.stream.dapr.bindings.input.producer.content-type=fake-content-type",
+						"spring.cloud.stream.dapr.bindings.input.producer.metadata.ttlInSeconds=60",
+						"spring.cloud.stream.dapr.bindings.input.producer.metadata.rawPayload=true"
 				)
 				.run(context -> {
 					assertThat(context).hasSingleBean(DaprMessageChannelBinder.class);
@@ -39,12 +40,14 @@ public class DaprBinderPropertiesTests {
 
 					DaprProducerProperties producerProperties =
 							binder.getExtendedProducerProperties("input");
-					assertEquals("fake-pubsub-name", producerProperties.getPubsubName());
-					assertEquals("fake-content-type", producerProperties.getContentType());
-					assertEquals("127.0.0.2", producerProperties.getSidecarIp());
 					assertTrue(producerProperties.isSync());
-					assertEquals(Duration.ofMillis(5000), producerProperties.getSendTimeout());
+					assertEquals("fake-pubsub-name", producerProperties.getPubsubName());
+					assertEquals("127.0.0.2", producerProperties.getSidecarIp());
 					assertEquals(50000, producerProperties.getGrpcPort().longValue());
+					assertEquals(Duration.ofMillis(5000), producerProperties.getSendTimeout());
+					assertEquals("fake-content-type", producerProperties.getContentType());
+					assertEquals("60", producerProperties.getMetadata().get("ttlInSeconds"));
+					assertEquals("true", producerProperties.getMetadata().get("rawPayload"));
 				});
 	}
 }

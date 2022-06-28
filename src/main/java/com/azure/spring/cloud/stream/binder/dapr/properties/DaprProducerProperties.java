@@ -4,6 +4,7 @@
 package com.azure.spring.cloud.stream.binder.dapr.properties;
 
 import java.time.Duration;
+import java.util.Map;
 
 /**
  * The Dapr producer binding configuration properties.
@@ -39,6 +40,29 @@ public class DaprProducerProperties {
 	 * The content type of the message sent.
 	 */
 	private String contentType = "application/json";
+
+	/**
+	 * Dapr Pub/Sub API metadata.
+	 */
+	private Map<String, String> metadata;
+
+	/**
+	 * Get metadata.
+	 *
+	 * @return metadata the metadata
+	 */
+	public Map<String, String> getMetadata() {
+		return metadata;
+	}
+
+	/**
+	 * Set metadata.
+	 *
+	 * @param metadata the metadata
+	 */
+	public void setMetadata(Map<String, String> metadata) {
+		this.metadata = metadata;
+	}
 
 	/**
 	 * Get sync.

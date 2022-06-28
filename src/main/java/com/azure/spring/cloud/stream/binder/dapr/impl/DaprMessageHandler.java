@@ -5,6 +5,7 @@ package com.azure.spring.cloud.stream.binder.dapr.impl;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
+import java.util.Map;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
 
@@ -42,6 +43,7 @@ public class DaprMessageHandler extends AbstractMessageProducingHandler {
 	private String topic;
 	private String pubsubName;
 	private EvaluationContext evaluationContext;
+	private Map<String, String> metadata;
 	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper()
 			.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 			.setSerializationInclusion(JsonInclude.Include.NON_NULL);
@@ -69,7 +71,7 @@ public class DaprMessageHandler extends AbstractMessageProducingHandler {
 
 	@Override
 	protected void handleMessageInternal(Message<?> message) {
-		Mono<Empty> mono = publishEvent(pubsubName, topic, message);
+		Mono<Empty> mono = publishEvent(message);
 		if (this.sync) {
 			this.waitingSendResponse(mono, message);
 		}
@@ -119,18 +121,17 @@ public class DaprMessageHandler extends AbstractMessageProducingHandler {
 	/**
 	 * Publish event to specified topic of specified pubsub.
 	 *
-	 * @param pubsubName the pubsub component name
-	 * @param topic	the topic
 	 * @param data the data
 	 */
-	private Mono<Empty> publishEvent(String pubsubName, String topic, Object data) {
+	private Mono<Empty> publishEvent(Object data) {
 		try {
 			DaprProtos.PublishEventRequest request = DaprProtos.PublishEventRequest.newBuilder()
-					.setTopic(topic)
-					.setPubsubName(pubsubName)
-					.setData(ByteString.copyFrom(OBJECT_MAPPER.writeValueAsBytes(data))).build();
+					.putAllMetadata(this.metadata)
+					.setTopic(this.topic)
+					.setPubsubName(this.pubsubName)
+					.setData(ByteString.copyFrom(this.OBJECT_MAPPER.writeValueAsBytes(data))).build();
 			return this.<Empty>createMono(it -> {
-				daprStub.publishEvent(request, it);
+				this.daprStub.publishEvent(request, it);
 			});
 		}
 		catch (Exception ex) {
@@ -198,6 +199,7 @@ public class DaprMessageHandler extends AbstractMessageProducingHandler {
 	 */
 	public void setSendTimeout(long sendTimeout) {
 		this.setSendTimeoutExpression(new ValueExpression(sendTimeout));
+		LOGGER.info("DaprMessageHandler syncTimeout becomes: {}", sendTimeout);
 	}
 
 	/**
@@ -207,5 +209,24 @@ public class DaprMessageHandler extends AbstractMessageProducingHandler {
 	 */
 	public Expression getSendTimeoutExpression() {
 		return this.sendTimeoutExpression;
+	}
+
+	/**
+	 * Get metadata.
+	 *
+	 * @return metadata the metadata
+	 */
+	public Map<String, String> getMetadata() {
+		return metadata;
+	}
+
+	/**
+	 * Set metadata.
+	 *
+	 * @param metadata the metadata
+	 */
+	public void setMetadata(Map<String, String> metadata) {
+		this.metadata = metadata;
+		LOGGER.info("DaprMessageHandler metadata becomes: {}", metadata.toString());
 	}
 }
