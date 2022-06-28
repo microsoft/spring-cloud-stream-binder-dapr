@@ -24,21 +24,21 @@ If the project has not used message oriented middleware before, you only need to
 ```
 spring:
   cloud:
-#    azure:
-#      eventhubs:
-#        namespace: ${AZURE_EVENTHUBS_NAMESPACE}
-#        processor:
-#          checkpoint-store:
-#            container-name: ${AZURE_STORAGE_CONTAINER_NAME}
-#            account-name:  ${AZURE_STORAGE_ACCOUNT_NAME}
     stream:
       function:
         definition: consume;supply
       bindings:
         consume-in-0:
-          destination: ${AZURE_EVENTHUBS_NAME}
+          destination: ${TOPIC_NAME}
         supply-out-0:
-          destination: ${AZURE_EVENTHUBS_NAME} # same as the above destination
+          destination: ${TOPIC_NAME} # same as the above destination
+      dapr:
+        bindings:
+          supply-out-0:
+            producer:
+              pubsubName: ${PUBSUB_NAME}
+              sidecarIp: 127.0.0.1
+              grpcPort: 50001
       poller:
         initial-delay: 0
         fixed-delay: 1000
