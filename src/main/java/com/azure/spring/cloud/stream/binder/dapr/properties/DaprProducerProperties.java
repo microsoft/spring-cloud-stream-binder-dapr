@@ -24,7 +24,7 @@ public class DaprProducerProperties {
 	/**
 	 * the name of the message component.
 	 */
-	private String pubsubName;
+	private String pubsubName = "pubsub";
 
 	/**
 	 * Dapr's Sidecar IP for gRPC communication.

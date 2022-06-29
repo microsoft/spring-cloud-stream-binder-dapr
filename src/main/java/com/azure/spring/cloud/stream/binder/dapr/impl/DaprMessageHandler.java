@@ -37,11 +37,12 @@ import org.springframework.util.Assert;
  */
 public class DaprMessageHandler extends AbstractMessageProducingHandler {
 	private static final Logger LOGGER = LoggerFactory.getLogger(DaprMessageHandler.class);
+	private DaprGrpc.DaprStub daprStub;
 	private Expression sendTimeoutExpression = new ValueExpression(10000L);
 	private boolean sync = false;
-	private DaprGrpc.DaprStub daprStub;
 	private String topic;
 	private String pubsubName;
+	private String contentType;
 	private EvaluationContext evaluationContext;
 	private Map<String, String> metadata;
 	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper()
@@ -126,6 +127,7 @@ public class DaprMessageHandler extends AbstractMessageProducingHandler {
 	private Mono<Empty> publishEvent(Object data) {
 		try {
 			DaprProtos.PublishEventRequest request = DaprProtos.PublishEventRequest.newBuilder()
+					.setDataContentType(this.contentType)
 					.putAllMetadata(this.metadata)
 					.setTopic(this.topic)
 					.setPubsubName(this.pubsubName)
@@ -228,5 +230,23 @@ public class DaprMessageHandler extends AbstractMessageProducingHandler {
 	public void setMetadata(Map<String, String> metadata) {
 		this.metadata = metadata;
 		LOGGER.info("DaprMessageHandler metadata becomes: {}", metadata.toString());
+	}
+
+	/**
+	 * Get the contentType.
+	 *
+	 * @return contentType the contentType
+	 */
+	public String getContentType() {
+		return contentType;
+	}
+
+	/**
+	 * Set the content type.
+	 *
+	 * @param contentType the content type
+	 */
+	public void setContentType(String contentType) {
+		this.contentType = contentType;
 	}
 }

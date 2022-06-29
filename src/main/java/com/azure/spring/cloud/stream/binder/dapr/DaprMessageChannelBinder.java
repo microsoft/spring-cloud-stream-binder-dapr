@@ -57,6 +57,7 @@ public class DaprMessageChannelBinder extends
 		daprMessageHandler.setMetadata(producerProperties.getExtension().getMetadata());
 		daprMessageHandler.setSync(producerProperties.getExtension().isSync());
 		daprMessageHandler.setSendTimeout(producerProperties.getExtension().getSendTimeout().toMillis());
+		daprMessageHandler.setContentType(producerProperties.getExtension().getContentType());
 		daprMessageHandler.setBeanFactory(getBeanFactory());
 		return daprMessageHandler;
 	}
