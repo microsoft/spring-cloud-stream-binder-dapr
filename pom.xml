@@ -65,10 +65,10 @@
 						<id>checkstyle-validation</id>
 						<configuration>
 							<configLocation>
-								https://raw.githubusercontent.com/MouMangTai/spring-cloud-stream-binder-dapr/main/src/main/resources/checkstyle.xml
+								https://raw.githubusercontent.com/MouMangTai/spring-cloud-stream-binder-dapr/main/spring-cloud-stream-binder-dapr/src/main/resources/checkstyle.xml
 							</configLocation>
 							<headerLocation>
-								https://raw.githubusercontent.com/MouMangTai/spring-cloud-stream-binder-dapr/main/src/main/resources/checkstyle-header.txt
+								https://raw.githubusercontent.com/MouMangTai/spring-cloud-stream-binder-dapr/main/spring-cloud-stream-binder-dapr/src/main/resources/checkstyle-header.txt
 							</headerLocation>
 						</configuration>
 					</execution>
