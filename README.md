@@ -112,11 +112,56 @@ The following properties are available for metadata only and must be prefixed wi
 Additional metadata parameters are available based on each pubsub component.
 ##### ttlInSeconds
 the number of seconds for the message to expire.If not set, it will not expire.
+
+Default: `no limit`
 ##### rawPayload
 boolean to determine if Dapr should publish the event without wrapping it as CloudEvent.
 
 Default: `false`
 
+## Building
+
+### Basic Compile and Test
+
+Pre-requisites:
+
+- To compile, JDK 1.8 installed.
+
+The build uses the Maven wrapper so you don’t have to install a specific version of Maven. The main build command is
+
+```
+$ ./mvnw clean install
+```
+
+You can also add `-DskipTests` if you like, to avoid running the tests.
+
+
+> ***Note:***
+> You can also install Maven (>=3.3.3) yourself and run the `mvn` command in place of `./mvnw` in the examples below. If you do that you also might need to add `-P spring` if your local Maven settings do not contain repository declarations for spring pre-release artifacts.
+
+> ***Note:***
+> Be aware that you might need to increase the amount of memory available to Maven by setting a `MAVEN_OPTS` environment variable with a value like `-Xmx512m -XX:MaxPermSize=128m`. We try to cover this in the `.mvn` configuration, so if you find you have to do it to make a build succeed, please raise a ticket to get the settings added to source control.
+
+### Working with the code
+If you don’t have an IDE preference we would recommend that you use [Spring Tools Suite](https://www.springsource.com/developer/sts) or [Eclipse](https://www.eclipse.org) when working with the code. We use the [m2eclipe](https://www.eclipse.org/m2e/) eclipse plugin for maven support. Other IDEs and tools should also work without issue.
+
+#### Importing into eclipse with m2eclipse
+
+We recommend the [m2eclipe](https://www.eclipse.org/m2e/) eclipse plugin when working with eclipse. If you don’t already have m2eclipse installed it is available from the "eclipse marketplace".
+
+Unfortunately m2e does not yet support Maven 3.3, so once the projects are imported into Eclipse you will also need to tell m2eclipse to use the `.settings.xml` file for the projects. If you do not do this you may see many different errors related to the POMs in the projects. Open your Eclipse preferences, expand the Maven preferences, and select User Settings. In the User Settings field click Browse and navigate to the Spring Cloud project you imported selecting the `.settings.xml` file in that project. Click Apply and then OK to save the preference changes.
+
+> ***Note:***
+> Alternatively you can copy the repository settings from [.settings.xml](https://github.com/spring-cloud/spring-cloud-build/blob/main/.settings.xml) into your own `~/.m2/settings.xml`.
+
+#### Importing into eclipse without m2eclipse
+
+If you prefer not to use m2eclipse you can generate eclipse project metadata using the following command:
+
+```
+$ ./mvnw eclipse:eclipse
+```
+The generated eclipse projects can be imported by selecting `import existing projects` from the `file` menu.
 ## Samples
 
 Please refer to [here](https://github.com/MouMangTai/spring-cloud-stream-binder-dapr-sample)
