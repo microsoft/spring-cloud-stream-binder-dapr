@@ -1,11 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package dapr.config;
+package com.azure.spring.cloud.stream.binder.dapr.config;
 
-import dapr.DaprMessageChannelBinder;
-import dapr.properties.DaprExtendedBindingProperties;
-import dapr.provisioning.DaprBinderProvisioner;
+import com.azure.spring.cloud.stream.binder.dapr.DaprMessageChannelBinder;
+import com.azure.spring.cloud.stream.binder.dapr.properties.DaprExtendedBindingProperties;
+import com.azure.spring.cloud.stream.binder.dapr.provisioning.DaprBinderProvisioner;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

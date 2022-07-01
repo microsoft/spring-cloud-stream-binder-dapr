@@ -1,11 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package dapr.provisioning;
+package com.azure.spring.cloud.stream.binder.dapr.provisioning;
 
 
-import dapr.properties.DaprConsumerProperties;
-import dapr.properties.DaprProducerProperties;
+import com.azure.spring.cloud.stream.binder.dapr.properties.DaprConsumerProperties;
+import com.azure.spring.cloud.stream.binder.dapr.properties.DaprProducerProperties;
 
 import org.springframework.cloud.stream.binder.ExtendedConsumerProperties;
 import org.springframework.cloud.stream.binder.ExtendedProducerProperties;

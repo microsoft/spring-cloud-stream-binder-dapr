@@ -1,14 +1,14 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package dapr;
+package com.azure.spring.cloud.stream.binder.dapr;
 
-import dapr.impl.DaprMessageHandler;
-import dapr.impl.DaprMessageProducer;
-import dapr.properties.DaprConsumerProperties;
-import dapr.properties.DaprExtendedBindingProperties;
-import dapr.properties.DaprProducerProperties;
-import dapr.provisioning.DaprBinderProvisioner;
+import com.azure.spring.cloud.stream.binder.dapr.impl.DaprMessageHandler;
+import com.azure.spring.cloud.stream.binder.dapr.impl.DaprMessageProducer;
+import com.azure.spring.cloud.stream.binder.dapr.properties.DaprConsumerProperties;
+import com.azure.spring.cloud.stream.binder.dapr.properties.DaprExtendedBindingProperties;
+import com.azure.spring.cloud.stream.binder.dapr.properties.DaprProducerProperties;
+import com.azure.spring.cloud.stream.binder.dapr.provisioning.DaprBinderProvisioner;
 import io.dapr.v1.DaprGrpc;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;

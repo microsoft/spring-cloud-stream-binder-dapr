@@ -1,12 +1,12 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package dapr.properties;
+package com.azure.spring.cloud.stream.binder.dapr.properties;
 
 import java.time.Duration;
 
-import dapr.DaprMessageChannelBinder;
-import dapr.config.DaprBinderConfiguration;
+import com.azure.spring.cloud.stream.binder.dapr.DaprMessageChannelBinder;
+import com.azure.spring.cloud.stream.binder.dapr.config.DaprBinderConfiguration;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.boot.autoconfigure.AutoConfigurations;

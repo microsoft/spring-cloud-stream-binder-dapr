@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package dapr.impl;
+package com.azure.spring.cloud.stream.binder.dapr.impl;
 
 import org.springframework.integration.endpoint.MessageProducerSupport;
 

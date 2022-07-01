@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package dapr.properties;
+package com.azure.spring.cloud.stream.binder.dapr.properties;
 
 import java.util.HashMap;
 import java.util.Map;
