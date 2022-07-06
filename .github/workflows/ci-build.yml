@@ -1,0 +1,16 @@
+# build the project with `mvn clean install` command
+name: Build the project
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      # Run command "mvn clean install"
+      - name: Run ./mvnw clean install
+        run: ./mvnw clean install
