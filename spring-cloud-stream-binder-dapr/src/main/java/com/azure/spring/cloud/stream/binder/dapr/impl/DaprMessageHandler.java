@@ -3,15 +3,13 @@
 
 package com.azure.spring.cloud.stream.binder.dapr.impl;
 
-import java.util.function.Consumer;
-
 import com.azure.spring.cloud.stream.binder.dapr.messaging.DaprMessageConverter;
 import com.google.protobuf.Empty;
 import io.dapr.v1.DaprGrpc;
 import io.dapr.v1.DaprProtos;
 import io.grpc.stub.StreamObserver;
-import reactor.core.publisher.Mono;
-import reactor.core.publisher.MonoSink;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.springframework.integration.handler.AbstractMessageProducingHandler;
 import org.springframework.messaging.Message;
@@ -21,6 +19,7 @@ import org.springframework.util.Assert;
  * The {@link DaprMessageHandler} wraps a {@link DaprGrpc.DaprStub} to publish events.
  */
 public class DaprMessageHandler extends AbstractMessageProducingHandler {
+	private static final Logger LOGGER = LoggerFactory.getLogger(DaprMessageHandler.class);
 	private final DaprGrpc.DaprStub daprStub;
 	private final String topic;
 	private final String pubsubName;
@@ -50,35 +49,28 @@ public class DaprMessageHandler extends AbstractMessageProducingHandler {
 
 	/**
 	 * Publish event with specified message.
-	 *
-	 * @param message the message
 	 */
-	private Mono<Empty> publishEvent(Message<?> message) {
+	private void publishEvent(Message<?> message) {
 		DaprProtos.PublishEventRequest.Builder builder = daprMessageConverter.fromMessage(message);
 		builder.setTopic(topic);
 		builder.setPubsubName(pubsubName);
-		return createMono(it -> daprStub.publishEvent(builder.build(), it));
+		daprStub.publishEvent(builder.build(), createDaprStreamObserver());
 	}
 
-	private <T> Mono<T> createMono(Consumer<StreamObserver<T>> consumer) {
-		return Mono.create(sink -> consumer.accept(createStreamObserver(sink)));
-	}
-
-	private <T> StreamObserver<T> createStreamObserver(MonoSink<T> sink) {
-		return new StreamObserver<T>() {
+	private StreamObserver<Empty> createDaprStreamObserver() {
+		return new StreamObserver<Empty>() {
 			@Override
-			public void onNext(T value) {
-				sink.success(value);
+			public void onNext(Empty empty) {
 			}
 
 			@Override
-			public void onError(Throwable t) {
-				sink.error(t);
+			public void onError(Throwable throwable) {
+				LOGGER.error("Failed to publish event: {}", throwable.getMessage());
 			}
 
 			@Override
 			public void onCompleted() {
-				sink.success();
+				LOGGER.info("Success to publish event");
 			}
 		};
 	}
