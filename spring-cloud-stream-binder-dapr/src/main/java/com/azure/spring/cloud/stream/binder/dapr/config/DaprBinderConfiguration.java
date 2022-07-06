@@ -4,8 +4,13 @@
 package com.azure.spring.cloud.stream.binder.dapr.config;
 
 import com.azure.spring.cloud.stream.binder.dapr.DaprMessageChannelBinder;
+import com.azure.spring.cloud.stream.binder.dapr.messaging.DaprMessageConverter;
+import com.azure.spring.cloud.stream.binder.dapr.properties.DaprBinderProperties;
 import com.azure.spring.cloud.stream.binder.dapr.properties.DaprExtendedBindingProperties;
 import com.azure.spring.cloud.stream.binder.dapr.provisioning.DaprBinderProvisioner;
+import io.dapr.v1.DaprGrpc;
+import io.grpc.ManagedChannel;
+import io.grpc.ManagedChannelBuilder;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -14,38 +19,46 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * The auto-configuration for dapr message binder.
+ * The auto-configuration for Dapr binder.
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnMissingBean(Binder.class)
-@EnableConfigurationProperties({DaprExtendedBindingProperties.class})
+@EnableConfigurationProperties({DaprBinderProperties.class, DaprExtendedBindingProperties.class})
 public class DaprBinderConfiguration {
 
-	/**
-	 * Declare {@link DaprBinderProvisioner} bean.
-	 *
-	 * @return the {@link DaprBinderProvisioner} bean.
-	 */
 	@Bean
 	@ConditionalOnMissingBean
 	public DaprBinderProvisioner daprBinderProvisioner() {
 		return new DaprBinderProvisioner();
 	}
 
-	/**
-	 * Declare {@link DaprMessageChannelBinder} bean.
-	 *
-	 * @param daprBinderProvisioner the dapr binder provisioner.
-	 * @param daprExtendedBindingProperties the dapr extended binding properties.
-	 *
-	 * @return the {@link DaprMessageChannelBinder} bean.
-	 */
+	@Bean
+	@ConditionalOnMissingBean
+	public DaprMessageConverter daprMessageConverter() {
+		return new DaprMessageConverter();
+	}
+
+	@Bean
+	@ConditionalOnMissingBean
+	public DaprGrpc.DaprStub daprStub(DaprBinderProperties daprBinderProperties) {
+		ManagedChannel managedChannel = ManagedChannelBuilder
+				.forAddress(daprBinderProperties.getDaprIp(), daprBinderProperties.getDaprPort())
+				.usePlaintext()
+				.build();
+		return DaprGrpc.newStub(managedChannel);
+	}
+
 	@Bean
 	@ConditionalOnMissingBean
 	public DaprMessageChannelBinder daprMessageChannelBinder(DaprBinderProvisioner daprBinderProvisioner,
-			DaprExtendedBindingProperties daprExtendedBindingProperties) {
-		DaprMessageChannelBinder daprMessageChannelBinder = new DaprMessageChannelBinder(null, daprBinderProvisioner);
-		daprMessageChannelBinder.setBindingProperties(daprExtendedBindingProperties);
-		return daprMessageChannelBinder;
+			DaprExtendedBindingProperties daprExtendedBindingProperties,
+			DaprGrpc.DaprStub daprStub,
+			DaprMessageConverter daprMessageConverter) {
+		return new DaprMessageChannelBinder(
+				null,
+				daprBinderProvisioner,
+				daprStub,
+				daprExtendedBindingProperties,
+				daprMessageConverter);
 	}
 }

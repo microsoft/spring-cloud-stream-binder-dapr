@@ -10,42 +10,28 @@ import org.springframework.cloud.stream.binder.BinderSpecificPropertiesProvider;
  */
 public class DaprBindingProperties implements BinderSpecificPropertiesProvider {
 
+	/**
+	 * The Dapr consumer binding configuration properties.
+	 */
 	private DaprConsumerProperties consumer = new DaprConsumerProperties();
 
+	/**
+	 * The Dapr producer binding configuration properties.
+	 */
 	private DaprProducerProperties producer = new DaprProducerProperties();
 
-	/**
-	 * Get the consumer properties.
-	 *
-	 * @return consumer the consumer properties
-	 */
 	public DaprConsumerProperties getConsumer() {
 		return consumer;
 	}
 
-	/**
-	 * Set the consumer properties.
-	 *
-	 * @param consumer the consumer properties
-	 */
 	public void setConsumer(DaprConsumerProperties consumer) {
 		this.consumer = consumer;
 	}
 
-	/**
-	 * Get the producer properties.
-	 *
-	 * @return producer the producer properties
-	 */
 	public DaprProducerProperties getProducer() {
 		return producer;
 	}
 
-	/**
-	 * Set the producer properties.
-	 *
-	 * @param producer the producer properties
-	 */
 	public void setProducer(DaprProducerProperties producer) {
 		this.producer = producer;
 	}

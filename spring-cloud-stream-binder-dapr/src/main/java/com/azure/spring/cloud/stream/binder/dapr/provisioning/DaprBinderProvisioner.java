@@ -3,7 +3,6 @@
 
 package com.azure.spring.cloud.stream.binder.dapr.provisioning;
 
-
 import com.azure.spring.cloud.stream.binder.dapr.properties.DaprConsumerProperties;
 import com.azure.spring.cloud.stream.binder.dapr.properties.DaprProducerProperties;
 
@@ -17,15 +16,74 @@ import org.springframework.cloud.stream.provisioning.ProvisioningProvider;
 /**
  * The {@link DaprBinderProvisioner} is responsible for the provisioning of consumer and producer destinations.
  */
-public class DaprBinderProvisioner implements ProvisioningProvider<ExtendedConsumerProperties<DaprConsumerProperties>, ExtendedProducerProperties<DaprProducerProperties>> {
+public class DaprBinderProvisioner
+		implements
+		ProvisioningProvider<ExtendedConsumerProperties<DaprConsumerProperties>,
+				ExtendedProducerProperties<DaprProducerProperties>> {
 
 	@Override
-	public ProducerDestination provisionProducerDestination(String name, ExtendedProducerProperties<DaprProducerProperties> properties) throws ProvisioningException {
+	public ProducerDestination provisionProducerDestination(String name,
+			ExtendedProducerProperties<DaprProducerProperties> properties) throws ProvisioningException {
+		validateOrCreateForProducer(name);
 		return new DaprProducerDestination(name);
 	}
 
 	@Override
-	public ConsumerDestination provisionConsumerDestination(String name, String group, ExtendedConsumerProperties<DaprConsumerProperties> properties) throws ProvisioningException {
+	public ConsumerDestination provisionConsumerDestination(String name, String group,
+			ExtendedConsumerProperties<DaprConsumerProperties> properties) throws ProvisioningException {
+		validateOrCreateForConsumer(name, group);
 		return new DaprConsumerDestination(name);
+	}
+
+	/**
+	 * Validate or create for consumer.
+	 *
+	 * @param name the name
+	 * @param group the group
+	 */
+	protected void validateOrCreateForConsumer(String name, String group) {
+		// no-op
+	}
+
+	/**
+	 * Validate or create for producer.
+	 *
+	 * @param name the name
+	 */
+	protected void validateOrCreateForProducer(String name) {
+		// no-op
+	}
+
+	private static final class DaprProducerDestination implements ProducerDestination {
+
+		private final String topic;
+
+		DaprProducerDestination(String topic) {
+			this.topic = topic.trim();
+		}
+
+		@Override
+		public String getName() {
+			return topic;
+		}
+
+		@Override
+		public String getNameForPartition(int partition) {
+			return topic + "-" + partition;
+		}
+	}
+
+	private static final class DaprConsumerDestination implements ConsumerDestination {
+
+		private final String topic;
+
+		DaprConsumerDestination(final String topic) {
+			this.topic = topic.trim();
+		}
+
+		@Override
+		public String getName() {
+			return topic;
+		}
 	}
 }

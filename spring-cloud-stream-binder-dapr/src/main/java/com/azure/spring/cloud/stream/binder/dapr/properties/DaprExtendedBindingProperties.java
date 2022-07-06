@@ -3,24 +3,22 @@
 
 package com.azure.spring.cloud.stream.binder.dapr.properties;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.cloud.stream.binder.AbstractExtendedBindingProperties;
 import org.springframework.cloud.stream.binder.BinderSpecificPropertiesProvider;
-import org.springframework.cloud.stream.binder.ExtendedBindingProperties;
 
 
 /**
  * The extended Dapr binding configuration properties.
  */
 @ConfigurationProperties(prefix = "spring.cloud.stream.dapr")
-public class DaprExtendedBindingProperties implements
-		ExtendedBindingProperties<DaprConsumerProperties, DaprProducerProperties> {
+public class DaprExtendedBindingProperties
+		extends AbstractExtendedBindingProperties<DaprConsumerProperties,
+		DaprProducerProperties, DaprBindingProperties> {
 
 	private static final String DEFAULTS_PREFIX = "spring.cloud.stream.dapr.default";
-
-	private Map<String, DaprBindingProperties> bindings = new HashMap<>();
 
 	@Override
 	public Class<? extends BinderSpecificPropertiesProvider> getExtendedPropertiesEntryClass() {
@@ -28,48 +26,12 @@ public class DaprExtendedBindingProperties implements
 	}
 
 	@Override
-	public DaprConsumerProperties getExtendedConsumerProperties(String channelName) {
-		if (this.bindings.containsKey(channelName)
-				&& this.bindings.get(channelName).getConsumer() != null) {
-			return this.bindings.get(channelName).getConsumer();
-		}
-		else {
-			return new DaprConsumerProperties();
-		}
-	}
-
-	@Override
-	public DaprProducerProperties getExtendedProducerProperties(String channelName) {
-		if (this.bindings.containsKey(channelName)
-				&& this.bindings.get(channelName).getProducer() != null) {
-			return this.bindings.get(channelName).getProducer();
-		}
-		else {
-			return new DaprProducerProperties();
-		}
+	public Map<String, DaprBindingProperties> getBindings() {
+		return this.doGetBindings();
 	}
 
 	@Override
 	public String getDefaultsPrefix() {
 		return DEFAULTS_PREFIX;
-	}
-
-	/**
-	 * Get bindings.
-	 *
-	 * @return bindings the bindings
-	 */
-	@Override
-	public Map<String, ?> getBindings() {
-		return this.bindings;
-	}
-
-	/**
-	 * Set bindings.
-	 *
-	 * @param bindings the bindings
-	 */
-	public void setBindings(Map<String, DaprBindingProperties> bindings) {
-		this.bindings = bindings;
 	}
 }
