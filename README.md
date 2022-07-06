@@ -1,124 +1,86 @@
-# spring-cloud-stream-binder-dapr
+# Spring Cloud Stream Binder Dapr
 
-## Overview
-The Spring Cloud Stream Binder for Dapr provides the binding implementation for the Spring Cloud Stream. 
-This project implements a Binder called "Spring Cloud Stream Binder for Dapr" based on the Spring Cloud Stream framework. With this native integration, Spring Cloud Stream applications can use the coding style of Spring Cloud Stream's existing framework to send and receive messages.
+This guide describes the Dapr implementation of the Spring Cloud Stream Binder. 
+It contains information about its design, usage and configuration options, as well as information on how the Stream Cloud Stream concepts map into Dapr specific constructs.
+### 1. Usage
 
+To use Dapr binder, you need to add `spring-cloud-stream-binder-dapr` as a dependency to your Spring Cloud Stream application, as shown in the following example for Maven:
+```xml
+<dependency>
+   <groupId>com.azure.spring</groupId>
+   <artifactId>spring-cloud-stream-binder-dapr</artifactId>
+</dependency>
+```
+
+Alternatively, you can use the Spring Cloud Stream RabbitMQ Starter, as follows:
+
+```xml
+<dependency>
+   <groupId>com.azure.spring</groupId>
+   <artifactId>spring-cloud-starter-stream-dapr</artifactId>
+</dependency>
+```
+
+## 2. Dapr Binder Overview
 The following simplified diagram shows how the Dapr binder operates:
 
 <img width="665" alt="image" src="https://user-images.githubusercontent.com/42743274/176439470-64c42ea4-ebff-48a5-81a3-e3f11bb87387.png">
 Figure 1. Dapr Binder
 
-The Dapr Binder implementation maps each destination to a Topic. Our service will publish messages to specific topics, and then get messages by subscribing to topics.The Dapr Publish & Subscribe building block provides out-of-the-box messaging abstractions and implementations.Specify pubsubName to call the predefined Dapr pub/sub component.Dapr guarantees `at-least-once` semantics for message delivery. After a message is published, it is sent at least once to any interested subscribers.
-
-## Usage
-
-1. Add or update dependency
-
-```
-<dependency>
-   <groupId>com.azure.spring</groupId>
-   <artifactId>spring-cloud-azure-stream-binder-dapr</artifactId>
-</dependency>
-```
-
-2. Update configuration
-
-If the project has previously used message oriented middleware, you only need to remove the middleware configuration and keep the Spring Cloud Stream configuration.
-
-If the project has not used message oriented middleware before, you only need to add the configuration related to messaging in Spring Cloud Stream.
-```
-spring:
-  cloud:
-    stream:
-      function:
-        definition: consume;supply
-      bindings:
-        consume-in-0:
-          destination: ${TOPIC_NAME}
-        supply-out-0:
-          destination: ${TOPIC_NAME} # same as the above destination
-      dapr:
-        bindings:
-          supply-out-0:
-            producer:
-              pubsubName: ${PUBSUB_NAME}
-              sidecarIp: 127.0.0.1
-              grpcPort: 50001
-      poller:
-        initial-delay: 0
-        fixed-delay: 1000
-```
-
-3. Code
-
-Directly use the coding method of the existing framework of Spring Cloud Stream, and define a consumer bean and a supplier bean.
-
-```
-@Bean
-public Supplier<Message<String>> supply() {
-    return () -> {
-        LOGGER.info("Sending message, sequence " + i);
-        return MessageBuilder.withPayload("Hello world, " + i++).build();
-    };
-}
+The Dapr Binder implementation maps each destination to a Dapr topic.
 
 
-@Bean
-public Consumer<Message<String>> consume() {
-    return message -> {
-        LOGGER.info("New message received: '{}'", message.getPayload());
-    };
-}
-```
-## Configuration Options
-This section contains settings specific to the Dapr Binder and bound channels.
+[//]: # (The Dapr Binder implementation maps each destination to a Topic. Our service will publish messages to specific topics, and then get messages by subscribing to topics.The Dapr Publish & Subscribe building block provides out-of-the-box messaging abstractions and implementations.Specify pubsubName to call the predefined Dapr pub/sub component.Dapr guarantees `at-least-once` semantics for message delivery. After a message is published, it is sent at least once to any interested subscribers.)
 
-For general binding configuration options and properties, please refer to the Spring Cloud Stream core documentation.
+[//]: # ()
+[//]: # ()
+[//]: # (This project provides the [Dapr]&#40;https://dapr.io&#41; implementation of the [Spring Cloud Stream Binder]&#40;https://docs.spring.io/spring-cloud-stream/docs/current/reference/html/spring-cloud-stream.html#spring-cloud-stream-overview-binders&#41;.)
 
-### Dapr Producer Properties
+## 3. Configuration Options
+This section contains the configuration options used by the Apache Kafka binder.
+
+For common configuration options and properties pertaining to the binder, see the [binding properties](https://docs.spring.io/spring-cloud-stream/docs/current/reference/html/#_configuration_options) in core documentation.
+### 3.1. Dapr Binder Properties
+
+The following properties are available for Dapr binder only and must be prefixed with `spring.cloud.stream.dapr.binder.`.
+
+#### daprIp
+The parameter of the channel, indicating the IP address of the dapr sidecar to which the message is finally sent through the channel.
+
+Default: `127.0.0.1`
+#### daprPort
+The parameter of channel, indicating the port that the dapr sidecar to which the message is finally sent through the channel listens.
+
+Default: `50001`
+
+### 3.2. Dapr Producer Properties
 
 The following properties are available for Dapr producers only and must be prefixed with `spring.cloud.stream.dapr.bindings.<bindingTarget>.producer.`.
-
-#### sync
-Whether messages should be written to the stream in a synchronous manner. If true, the producer will wait for a reply from Dapr after a `publishEvent` operation.
-
-Default: `false`
-
-#### sendTimeout
-Only valid if sync is set to true, the time in milliseconds to wait for a response from Dapr after a `publishEvent` operation.
-
-Default: `10000`
 
 #### pubsubName
 Specifies the name of the Pub/Sub component.
 
-Default: `pubsub`
-#### sidecarIp
-The parameter of the channel, indicating the IP address of the dapr sidecar to which the message is finally sent through the channel.
+> ***NOTE:***
+> PubsubName must be specified and has no default value.
 
-Default: `127.0.0.1`
-#### grpcPort
-The parameter of channel, indicating the grpc port that the dapr sidecar to which the message is finally sent through the channel listens.
+### 3.3 Dapr Consumer Properties
 
-Default: `50001`
-#### contentType
-The contentType tells Dapr which content type your data adheres to when constructing a CloudEvent envelope.
+### 3.4 Dapr Message Headers
 
-Default: `application/json`
-#### metadata
-The following properties are available for metadata only and must be prefixed with `spring.cloud.stream.dapr.bindings.<bindingTarget>.producer.metadata.`.
+The following table illustrates how Dapr message properties are mapped to Spring message headers.
 
-Additional metadata parameters are available based on each pubsub component.
-##### ttlInSeconds
-the number of seconds for the message to expire.If not set, it will not expire.
+| Dapr<br/>Message<br/>Properties | Spring Message Header Constants       | Type                 | Description                                                                                                                                                                                                                                                           |
+|:--------------------------------|---------------------------------------|----------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| contentType                     | DaprHeaders#CONTENT_TYPE              | String               | The contentType tells Dapr which content type your data adheres to when constructing a CloudEvent envelope.                                                                                                                                                           |
+| ttlInSeconds                    | DaprHeaders#TTL_IN_SECONDS            | Long                 | The number of seconds for the message to expire.                                                                                                                                                                                                                      |
+| rawPayload                      | DaprHeaders#RAW_PAY_LOAD              | Boolean              | Determine if Dapr should publish the event without wrapping it as CloudEvent. Not using CloudEvents disables support for tracing, event deduplication per messageId, content-type metadata, and any other features built using the CloudEvent schema.                 |
+| specifiedBrokerMetadata         | DaprHeaders#SPECIFIED_Broker_METADATA | Map<String, String>  | Some metadata parameters are available based on each pubsub broker component. For example Kafka, you could refer [Kafka per-call metadata fields](https://docs.dapr.io/reference/components-reference/supported-pubsub/setup-apache-kafka/#per-call-metadata-fields). |
+## 4. Samples
 
-Default: `no limit`
-##### rawPayload
-boolean to determine if Dapr should publish the event without wrapping it as CloudEvent.
+Please refer to [Spring Cloud Stream Binder Dapr Sample](https://github.com/MouMangTai/spring-cloud-stream-binder-dapr-sample) to run a sample.
 
-Default: `false`
 
+# Appendices
 ## Building
 
 ### Basic Compile and Test
@@ -129,18 +91,14 @@ Pre-requisites:
 
 The build uses the Maven wrapper so you don’t have to install a specific version of Maven. The main build command is
 
-```
+```shell
 $ ./mvnw clean install
 ```
 
 You can also add `-DskipTests` if you like, to avoid running the tests.
 
-
 > ***Note:***
-> You can also install Maven (>=3.3.3) yourself and run the `mvn` command in place of `./mvnw` in the examples below. If you do that you also might need to add `-P spring` if your local Maven settings do not contain repository declarations for spring pre-release artifacts.
-
-> ***Note:***
-> Be aware that you might need to increase the amount of memory available to Maven by setting a `MAVEN_OPTS` environment variable with a value like `-Xmx512m -XX:MaxPermSize=128m`. We try to cover this in the `.mvn` configuration, so if you find you have to do it to make a build succeed, please raise a ticket to get the settings added to source control.
+> You can also install Maven (>=3.3.3) yourself and run the `mvn` command in place of `./mvnw` in the examples below.
 
 ### Working with the code
 If you don’t have an IDE preference we would recommend that you use [Spring Tools Suite](https://www.springsource.com/developer/sts) or [Eclipse](https://www.eclipse.org) when working with the code. We use the [m2eclipe](https://www.eclipse.org/m2e/) eclipse plugin for maven support. Other IDEs and tools should also work without issue.
@@ -158,11 +116,25 @@ Unfortunately m2e does not yet support Maven 3.3, so once the projects are impor
 
 If you prefer not to use m2eclipse you can generate eclipse project metadata using the following command:
 
-```
+```shell
 $ ./mvnw eclipse:eclipse
 ```
 The generated eclipse projects can be imported by selecting `import existing projects` from the `file` menu.
-## Samples
 
-Please refer to [here](https://github.com/MouMangTai/spring-cloud-stream-binder-dapr-sample)
-to run a sample.
+## Contributing
+Spring Cloud is released under the non-restrictive Apache 2.0 license, and follows a very standard Github development process, using Github tracker for issues and merging pull requests into master. If you want to contribute even something trivial please do not hesitate, but follow the guidelines below.
+
+### Sign the Contributor License Agreement
+Before we accept a non-trivial patch or pull request we will need you to sign the contributor’s agreement. Signing the contributor’s agreement does not grant anyone commit rights to the main repository, but it does mean that we can accept your contributions, and you will get an author credit if we do. Active contributors might be asked to join the core team, and given the ability to merge pull requests.
+
+### Code Conventions and Housekeeping
+None of these is essential for a pull request, but they will all help. They can also be added after the original pull request but before a merge.
+
+- Use the Spring Framework code format conventions. If you use Eclipse you can import formatter settings using the `eclipse-code-formatter.xml` file from the [Spring Cloud Build](https://github.com/spring-cloud/build/tree/master/eclipse-coding-conventions.xml) project. If using IntelliJ, you can use the [Eclipse Code Formatter Plugin](https://plugins.jetbrains.com/plugin/6546-adapter-for-eclipse-code-formatter/) to import the same file.
+- Make sure all new `.java` files to have a simple Javadoc class comment with at least an `@author` tag identifying you, and preferably at least a paragraph on what the class is for.
+- Add the MIT license header comment to all new `.java` files (copy from existing files in the project).
+- Add yourself as an `@author` to the .java files that you modify substantially (more than cosmetic changes).
+- Add some Javadocs and, if you change the namespace, some XSD doc elements.
+- A few unit tests would help a lot as well — someone has to do it.
+- If no-one else is using your branch, please rebase it against the current master (or other target branch in the main project).
+- When writing a commit message please follow [these conventions](https://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html), if you are fixing an existing issue please add Fixes gh-XXXX at the end of the commit message (where XXXX is the issue number).
