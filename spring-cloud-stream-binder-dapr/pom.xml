@@ -2,20 +2,38 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-
-	<groupId>com.azure.spring</groupId>
+	<parent>
+		<artifactId>spring-cloud-stream-binder-dapr-parent</artifactId>
+		<groupId>com.azure.spring</groupId>
+		<version>1.0.0-SNAPSHOT</version>
+	</parent>
 	<artifactId>spring-cloud-stream-binder-dapr</artifactId>
 	<packaging>jar</packaging>
 	<name>spring-cloud-stream-binder-dapr</name>
 	<description>Dapr binder implementation</description>
 
-	<parent>
-		<artifactId>spring-cloud-stream-binder-dapr-parent</artifactId>
-		<groupId>com.azure.spring</groupId>
-		<version>1.0-SNAPSHOT</version>
-	</parent>
+	<url>https://microsoft.github.io/spring-cloud-azure</url>
+	<developers>
+		<developer>
+			<name>Spring Cloud Azure</name>
+			<email>SpringIntegSupport@microsoft.com</email>
+		</developer>
+	</developers>
+	<scm>
+		<connection>scm:git:git@github.com:Azure/azure-sdk-for-java.git</connection>
+		<developerConnection>scm:git:ssh://git@github.com:Azure/azure-sdk-for-java.git</developerConnection>
+		<url>https://github.com/Azure/azure-sdk-for-java</url>
+	</scm>
+	<issueManagement>
+		<system>GitHub</system>
+		<url>https://github.com/Azure/azure-sdk-for-java/issues</url>
+	</issueManagement>
 
 	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-configuration-processor</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-stream</artifactId>
@@ -27,6 +45,11 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-stream-binder-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-stream-test-support</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
