@@ -4,8 +4,10 @@
 package com.azure.spring.cloud.stream.binder.dapr.config;
 
 import com.azure.spring.cloud.stream.binder.dapr.DaprMessageChannelBinder;
+import com.azure.spring.cloud.stream.binder.dapr.properties.DaprBinderProperties;
 import com.azure.spring.cloud.stream.binder.dapr.properties.DaprExtendedBindingProperties;
 import com.azure.spring.cloud.stream.binder.dapr.provisioning.DaprBinderProvisioner;
+import io.dapr.v1.DaprGrpc;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.boot.autoconfigure.AutoConfigurations;
@@ -38,6 +40,8 @@ public class DaprBinderConfigurationTests {
 					assertThat(context).hasSingleBean(DaprExtendedBindingProperties.class);
 					assertThat(context).hasSingleBean(DaprBinderProvisioner.class);
 					assertThat(context).hasSingleBean(DaprMessageChannelBinder.class);
+					assertThat(context).hasSingleBean(DaprBinderProperties.class);
+					assertThat(context).hasSingleBean(DaprGrpc.DaprStub.class);
 				});
 	}
 }
