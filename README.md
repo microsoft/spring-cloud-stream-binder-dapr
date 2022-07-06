@@ -22,19 +22,22 @@ Alternatively, you can use the Spring Cloud Stream RabbitMQ Starter, as follows:
 ```
 
 ## 2. Dapr Binder Overview
+Dapr uses a modular design where functionality is delivered as a component. Each component has an interface definition, All of the components are pluggable.
+The Pub Sub components provide a common way to interact with different message bus implementations to achieve reliable, high-scale scenarios based on event-driven async communications, while allowing users to opt-in to advanced capabilities using defined metadata.
+
+Spring Cloud Stream Binder abstraction makes it possible for a Spring Cloud Stream application to be flexible in how it connects to middleware.
+
+Combining spring cloud stream binder and dapr, on the one hand dapr can make up the dependent on a specific middleware library for Spring Cloud Stream, on the other hand, spring cloud stream can help dapr and dapr client decoupling.Therefore, the combination of the two is conducive to the maximum decoupling and enhanced features of both sides.
+
 The following simplified diagram shows how the Dapr binder operates:
 
 <img width="665" alt="image" src="https://user-images.githubusercontent.com/42743274/176439470-64c42ea4-ebff-48a5-81a3-e3f11bb87387.png">
 Figure 1. Dapr Binder
 
-The Dapr Binder implementation maps each destination to a Dapr topic.
-
-
-[//]: # (The Dapr Binder implementation maps each destination to a Topic. Our service will publish messages to specific topics, and then get messages by subscribing to topics.The Dapr Publish & Subscribe building block provides out-of-the-box messaging abstractions and implementations.Specify pubsubName to call the predefined Dapr pub/sub component.Dapr guarantees `at-least-once` semantics for message delivery. After a message is published, it is sent at least once to any interested subscribers.)
-
-[//]: # ()
-[//]: # ()
-[//]: # (This project provides the [Dapr]&#40;https://dapr.io&#41; implementation of the [Spring Cloud Stream Binder]&#40;https://docs.spring.io/spring-cloud-stream/docs/current/reference/html/spring-cloud-stream.html#spring-cloud-stream-overview-binders&#41;.)
+The Dapr Binder implementation maps each destination to a Dapr `Topic`. 
+The message is sent to the specified topic, and then get message by subscribing to topic. For each consumer group, a Queue is bound to that `Topic`.
+Each consumer instance has a corresponding Dapr Consumer instance for its group’s Queue.
+Specify pubsubName to call the predefined Dapr Pub Sub component.
 
 ## 3. Configuration Options
 This section contains the configuration options used by the Apache Kafka binder.
@@ -75,10 +78,10 @@ The following table illustrates how Dapr message properties are mapped to Spring
 | ttlInSeconds                    | DaprHeaders#TTL_IN_SECONDS            | Long                 | The number of seconds for the message to expire.                                                                                                                                                                                                                      |
 | rawPayload                      | DaprHeaders#RAW_PAY_LOAD              | Boolean              | Determine if Dapr should publish the event without wrapping it as CloudEvent. Not using CloudEvents disables support for tracing, event deduplication per messageId, content-type metadata, and any other features built using the CloudEvent schema.                 |
 | specifiedBrokerMetadata         | DaprHeaders#SPECIFIED_Broker_METADATA | Map<String, String>  | Some metadata parameters are available based on each pubsub broker component. For example Kafka, you could refer [Kafka per-call metadata fields](https://docs.dapr.io/reference/components-reference/supported-pubsub/setup-apache-kafka/#per-call-metadata-fields). |
+
 ## 4. Samples
 
 Please refer to [Spring Cloud Stream Binder Dapr Sample](https://github.com/MouMangTai/spring-cloud-stream-binder-dapr-sample) to run a sample.
-
 
 # Appendices
 ## Building
