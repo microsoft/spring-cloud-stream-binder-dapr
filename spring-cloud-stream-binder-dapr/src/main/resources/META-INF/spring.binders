@@ -1,2 +1,2 @@
-daprBinder:\
+dapr:\
 com.azure.spring.cloud.stream.binder.dapr.config.DaprBinderConfiguration
