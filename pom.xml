@@ -22,6 +22,7 @@
 	<modules>
 		<module>spring-cloud-stream-binder-dapr</module>
 		<module>spring-cloud-starter-stream-dapr</module>
+		<module>spring-cloud-stream-binder-dapr-samples</module>
 	</modules>
 	<dependencyManagement>
 		<dependencies>
@@ -73,7 +74,7 @@
 					<execution>
 						<id>checkstyle-validation</id>
 						<configuration>
-							<headerLocation>src/checkstyle/checkstyle-header.txt</headerLocation>
+							<headerLocation>/src/checkstyle/checkstyle-header.txt</headerLocation>
 						</configuration>
 					</execution>
 				</executions>
