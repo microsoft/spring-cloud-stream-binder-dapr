@@ -37,7 +37,9 @@ public final class DaprHeaders {
 	 * Some metadata parameters are available based on each pubsub broker component.
 	 * You could refer <a href="https://docs.dapr.io/reference/components-reference/supported-pubsub/setup-apache-kafka/#per-call-metadata-fields">Kafka per-call metadata fields</a>.
 	 *
-	 * Type: Map< String , String >
+	 * Type: Map
+	 * Key Type: String
+	 * Value Type: String
 	 */
 	public static final String SPECIFIED_BROKER_METADATA = "specifiedBrokerMetadata";
 }
