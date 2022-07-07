@@ -79,10 +79,6 @@ The following table illustrates how Dapr message properties are mapped to Spring
 | rawPayload                      | DaprHeaders#RAW_PAY_LOAD              | Boolean              | Determine if Dapr should publish the event without wrapping it as CloudEvent. Not using CloudEvents disables support for tracing, event deduplication per messageId, content-type metadata, and any other features built using the CloudEvent schema.                 |
 | specifiedBrokerMetadata         | DaprHeaders#SPECIFIED_Broker_METADATA | Map<String, String>  | Some metadata parameters are available based on each pubsub broker component. For example Kafka, you could refer [Kafka per-call metadata fields](https://docs.dapr.io/reference/components-reference/supported-pubsub/setup-apache-kafka/#per-call-metadata-fields). |
 
-## 4. Samples
-
-Please refer to [Spring Cloud Stream Binder Dapr Sample](https://github.com/MouMangTai/spring-cloud-stream-binder-dapr-sample) to run a sample.
-
 # Appendices
 ## Building
 
