@@ -10,7 +10,7 @@
 		<groupId>com.azure.spring</groupId>
 		<artifactId>spring-cloud-stream-binder-dapr-samples-parent</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
-		<relativePath/>
+		<relativePath>../../pom.xml</relativePath>
 	</parent>
 	<properties>
 		<maven.compiler.source>11</maven.compiler.source>
