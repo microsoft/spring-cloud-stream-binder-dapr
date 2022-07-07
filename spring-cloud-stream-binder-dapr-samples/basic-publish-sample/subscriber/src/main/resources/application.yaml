@@ -1,0 +1,9 @@
+server:
+  port: 8083
+dapr:
+  client.pubsub.subscriptions:
+    - pubsubName: redis-pubsub
+      topic: topic
+grpc:
+  server:
+    port: 9090
