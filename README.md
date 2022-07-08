@@ -2,6 +2,7 @@
 
 This guide describes the Dapr implementation of the Spring Cloud Stream Binder. 
 It contains information about its design, usage and configuration options, as well as information on how the Stream Cloud Stream concepts map into Dapr specific constructs.
+
 ### 1. Usage
 
 To use Dapr binder, you need to add `spring-cloud-stream-binder-dapr` as a dependency to your Spring Cloud Stream application, as shown in the following example for Maven:
@@ -22,6 +23,7 @@ Alternatively, you can use the Spring Cloud Stream RabbitMQ Starter, as follows:
 ```
 
 ## 2. Dapr Binder Overview
+
 Dapr uses a modular design where functionality is delivered as a component. Each component has an interface definition, All of the components are pluggable.
 The Pub Sub components provide a common way to interact with different message bus implementations to achieve reliable, high-scale scenarios based on event-driven async communications, while allowing users to opt-in to advanced capabilities using defined metadata.
 
@@ -40,21 +42,121 @@ Each consumer instance has a corresponding Dapr Consumer instance for its groupâ
 Specify pubsubName to call the predefined Dapr Pub Sub component.
 
 ## 3. Configuration Options
+
 This section contains the configuration options used by the Apache Kafka binder.
 
 For common configuration options and properties pertaining to the binder, see the [binding properties](https://docs.spring.io/spring-cloud-stream/docs/current/reference/html/#_configuration_options) in core documentation.
+
 ### 3.1. Dapr Binder Properties
 
 The following properties are available for Dapr binder only and must be prefixed with `spring.cloud.stream.dapr.binder.`.
 
-#### daprIp
+#### spring.cloud.stream.dapr.binder.daprIp
+
 The parameter of the channel, indicating the IP address of the dapr sidecar to which the message is finally sent through the channel.
 
 Default: `127.0.0.1`
-#### daprPort
+
+#### spring.cloud.stream.dapr.binder.daprPort
+
 The parameter of channel, indicating the port that the dapr sidecar to which the message is finally sent through the channel listens.
 
 Default: `50001`
+
+#### spring.cloud.stream.dapr.binder.negotiationType
+
+NegotiationType decide which connection method to use. TLS and PLAINTEXT are currently available.
+
+- PLAINTEXT: Use of a plaintext connection to the server. By default a secure connection mechanism such as TLS will be used.
+  Should only be used for testing or for APIs where the use of such API or the data exchanged is not sensitive.
+  This assumes prior knowledge that the target of this channel is using plaintext. It will not perform HTTP/1.1 upgrades.
+- TLS: Makes the client use TLS.
+
+Default: `PLAINTEXT`
+
+#### spring.cloud.stream.dapr.binder.authority
+
+Overrides the authority used with TLS and HTTP virtual hosting. It does not change what host is actually connected to. Is commonly in the form host:port.
+
+This method is intended for testing, but may safely be used outside of tests as an alternative to DNS overrides.
+
+#### spring.cloud.stream.dapr.binder.defaultLoadBalancingPolicy
+
+Sets the default load-balancing policy that will be used if the service config doesn't specify one.
+
+This method is implemented by all stock channel builders that are shipped with gRPC, but may not be implemented by custom channel builders, in which case this method will throw.
+
+#### spring.cloud.stream.dapr.binder.idleTimeout
+
+Set the duration without ongoing RPCs before going to idle mode.
+
+In idle mode the channel shuts down all connections, the NameResolver and the LoadBalancer. A new RPC would take the channel out of idle mode. A channel starts in idle mode. Defaults to 30 minutes.
+
+This is an advisory option. Do not rely on any specific behavior related to this option.
+
+TimeUnit: `minutes`
+
+#### spring.cloud.stream.dapr.binder.keepAliveTime
+
+Sets the time without read activity before sending a keepalive ping. An unreasonably small value might be increased, and Long.MAX_VALUE nano seconds or an unreasonably large value will disable keepalive. Defaults to infinite.
+
+Clients must receive permission from the service owner before enabling this option. Keepalives can increase the load on services and are commonly "invisible" making it hard to notice when they are causing excessive load. Clients are strongly encouraged to use only as small of a value as necessary.
+
+TimeUnit: `minutes`
+
+#### spring.cloud.stream.dapr.binder.keepAliveTimeout
+
+Sets the time waiting for read activity after sending a keepalive ping. If the time expires without any read activity on the connection, the connection is considered dead. An unreasonably small value might be increased. Defaults to 20 seconds.
+
+This value should be at least multiple times the RTT to allow for lost packets.
+
+TimeUnit: `seconds`
+
+#### spring.cloud.stream.dapr.binder.perRpcBufferLimit
+
+Sets the per RPC buffer limit in bytes used for retry. The RPC is not retriable if its buffer limit is exceeded. The implementation may only estimate the buffer size being used rather than count the exact physical memory allocated. It does not have any effect if retry is disabled by the client.
+
+This method may not work as expected for the current release because retry is not fully implemented yet.
+
+#### spring.cloud.stream.dapr.binder.retryBufferSize
+
+Sets the retry buffer size in bytes. If the buffer limit is exceeded, no RPC could retry at the moment, and in hedging case all hedges but one of the same RPC will cancel. The implementation may only estimate the buffer size being used rather than count the exact physical memory allocated. The method does not have any effect if retry is disabled by the client.
+
+This method may not work as expected for the current release because retry is not fully implemented yet.
+
+#### spring.cloud.stream.dapr.binder.keepAliveWithoutCalls
+
+Sets whether keepalive will be performed when there are no outstanding RPC on a connection. Defaults to false.
+
+Clients must receive permission from the service owner before enabling this option. Keepalives on unused connections can easilly accidentally consume a considerable amount of bandwidth and CPU. `idleTimeout()` should generally be used instead of this option.
+
+#### spring.cloud.stream.dapr.binder.maxInboundMessageSize
+
+Sets the maximum message size allowed to be received on the channel. If not called, defaults to 4 MiB. The default provides protection to clients who haven't considered the possibility of receiving large messages while trying to be large enough to not be hit in normal usage.
+
+This method is advisory, and implementations may decide to not enforce this. Currently, the only known transport to not enforce this is InProcessTransport.
+
+#### spring.cloud.stream.dapr.binder.maxInboundMetadataSize
+
+Sets the maximum size of metadata allowed to be received. Integer.MAX_VALUE disables the enforcement. The default is implementation-dependent, but is not generally less than 8 KiB and may be unlimited.
+
+This is cumulative size of the metadata. The precise calculation is implementation-dependent, but implementations are encouraged to follow the calculation used for [HTTP/2's SETTINGS_MAX_HEADER_LIST_SIZE](https://httpwg.org/specs/rfc7540.html#rfc.section.6.5.2) . It sums the bytes from each entry's key and value, plus 32 bytes of overhead per entry.
+
+#### spring.cloud.stream.dapr.binder.maxRetryAttempts
+
+Sets the maximum number of retry attempts that may be configured by the service config. If the service config specifies a larger value it will be reduced to this value. Setting this number to zero is not effectively the same as disableRetry() because the former does not disable [transparent retry](https://github.com/grpc/proposal/blob/master/A6-client-retries.md#transparent-retries) .
+
+This method may not work as expected for the current release because retry is not fully implemented yet.
+
+#### spring.cloud.stream.dapr.binder.maxHedgedAttempts
+
+Sets the maximum number of hedged attempts that may be configured by the service config. If the service config specifies a larger value it will be reduced to this value.
+
+This method may not work as expected for the current release because retry is not fully implemented yet.
+
+#### spring.cloud.stream.dapr.binder.maxTraceEvents
+
+Sets the maximum number of channel trace events to keep in the tracer for each channel or subchannel. If set to 0, channel tracing is effectively disabled.
 
 ### 3.2. Dapr Producer Properties
 

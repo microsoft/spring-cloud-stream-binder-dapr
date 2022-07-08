@@ -4,8 +4,9 @@
 package com.azure.spring.cloud.stream.binder.dapr.config;
 
 import com.azure.spring.cloud.stream.binder.dapr.DaprMessageChannelBinder;
-import com.azure.spring.cloud.stream.binder.dapr.properties.DaprBinderProperties;
+import com.azure.spring.cloud.stream.binder.dapr.properties.DaprBinderConfigurationProperties;
 import com.azure.spring.cloud.stream.binder.dapr.properties.DaprExtendedBindingProperties;
+import com.azure.spring.cloud.stream.binder.dapr.properties.DaprProducerProperties;
 import com.azure.spring.cloud.stream.binder.dapr.provisioning.DaprBinderProvisioner;
 import io.dapr.v1.DaprGrpc;
 import org.junit.jupiter.api.Test;
@@ -17,7 +18,7 @@ import org.springframework.cloud.stream.binder.Binder;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
-public class DaprBinderConfigurationTests {
+class DaprBinderConfigurationTests {
 
 	private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
 			.withConfiguration(AutoConfigurations.of(DaprBinderConfiguration.class));
@@ -40,8 +41,60 @@ public class DaprBinderConfigurationTests {
 					assertThat(context).hasSingleBean(DaprExtendedBindingProperties.class);
 					assertThat(context).hasSingleBean(DaprBinderProvisioner.class);
 					assertThat(context).hasSingleBean(DaprMessageChannelBinder.class);
-					assertThat(context).hasSingleBean(DaprBinderProperties.class);
+					assertThat(context).hasSingleBean(DaprBinderConfigurationProperties.class);
 					assertThat(context).hasSingleBean(DaprGrpc.DaprStub.class);
+				});
+	}
+
+	@Test
+	void testExtendedBindingPropertiesShouldBind() {
+		this.contextRunner
+				.withPropertyValues(
+						"spring.cloud.stream.dapr.bindings.input.producer.pubsub-name=fake-pubsub-name",
+
+						"spring.cloud.stream.dapr.binder.dapr-ip=127.0.0.2",
+						"spring.cloud.stream.dapr.binder.dapr-port=50000",
+
+						"spring.cloud.stream.dapr.binder.managed-channel.defaultLoadBalancingPolicy=fake-policy",
+						"spring.cloud.stream.dapr.binder.managed-channel.authority=fake-authority",
+						"spring.cloud.stream.dapr.binder.managed-channel.idleTimeout=20",
+						"spring.cloud.stream.dapr.binder.managed-channel.keepAliveTime=30",
+						"spring.cloud.stream.dapr.binder.managed-channel.keepAliveTimeout=40",
+						"spring.cloud.stream.dapr.binder.managed-channel.perRpcBufferLimit=50",
+						"spring.cloud.stream.dapr.binder.managed-channel.retryBufferSize=60",
+						"spring.cloud.stream.dapr.binder.managed-channel.maxHedgedAttempts=2000",
+						"spring.cloud.stream.dapr.binder.managed-channel.maxInboundMessageSize=3000",
+						"spring.cloud.stream.dapr.binder.managed-channel.maxInboundMetadataSize=4000",
+						"spring.cloud.stream.dapr.binder.managed-channel.maxRetryAttempts=5000",
+						"spring.cloud.stream.dapr.binder.managed-channel.maxTraceEvents=6000",
+						"spring.cloud.stream.dapr.binder.managed-channel.keepAliveWithoutCalls=true",
+						"spring.cloud.stream.dapr.binder.managed-channel.negotiationType=TLS"
+				)
+				.run(context -> {
+					assertThat(context).hasSingleBean(DaprMessageChannelBinder.class);
+					DaprMessageChannelBinder binder = context.getBean(DaprMessageChannelBinder.class);
+					DaprProducerProperties producerProperties =
+							binder.getExtendedProducerProperties("input");
+					assertThat(producerProperties.getPubsubName()).isEqualTo("fake-pubsub-name");
+					DaprBinderConfigurationProperties binderProperties = context.getBean(DaprBinderConfigurationProperties.class);
+					assertThat(binderProperties.getDaprPort()).isEqualTo(50000);
+					assertThat(binderProperties.getDaprIp()).isEqualTo("127.0.0.2");
+
+					DaprBinderConfigurationProperties.ManagedChannel managedChannel = binderProperties.getManagedChannel();
+					assertThat(managedChannel.getDefaultLoadBalancingPolicy()).isEqualTo("fake-policy");
+					assertThat(managedChannel.getAuthority()).isEqualTo("fake-authority");
+					assertThat(managedChannel.getIdleTimeout()).isEqualTo(20);
+					assertThat(managedChannel.getKeepAliveTime()).isEqualTo(30);
+					assertThat(managedChannel.getKeepAliveTimeout()).isEqualTo(40);
+					assertThat(managedChannel.getPerRpcBufferLimit()).isEqualTo(50);
+					assertThat(managedChannel.getRetryBufferSize()).isEqualTo(60);
+					assertThat(managedChannel.getMaxHedgedAttempts()).isEqualTo(2000);
+					assertThat(managedChannel.getMaxInboundMessageSize()).isEqualTo(3000);
+					assertThat(managedChannel.getMaxInboundMetadataSize()).isEqualTo(4000);
+					assertThat(managedChannel.getMaxRetryAttempts()).isEqualTo(5000);
+					assertThat(managedChannel.getMaxTraceEvents()).isEqualTo(6000);
+					assertThat(managedChannel.isKeepAliveWithoutCalls()).isEqualTo(true);
+					assertThat(managedChannel.getNegotiationType()).isEqualTo(DaprBinderConfigurationProperties.NegotiationType.TLS);
 				});
 	}
 }

@@ -8,13 +8,13 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class DaprBinderPropertiesTests {
+class DaprBinderConfigurationPropertiesTests {
 
-	private DaprBinderProperties binderProperties;
+	private DaprBinderConfigurationProperties binderProperties;
 
 	@BeforeEach
 	void beforeEach() {
-		binderProperties = new DaprBinderProperties();
+		binderProperties = new DaprBinderConfigurationProperties();
 	}
 
 	@Test
@@ -28,16 +28,8 @@ public class DaprBinderPropertiesTests {
 	}
 
 	@Test
-	void customDaprIp() {
-		String daprIp = "127.0.0.2";
-		binderProperties.setDaprIp(daprIp);
-		assertThat(binderProperties.getDaprIp()).isEqualTo(daprIp);
-	}
-
-	@Test
-	void customDaprPort() {
-		int daprPort = 50002;
-		binderProperties.setDaprPort(daprPort);
-		assertThat(binderProperties.getDaprPort()).isEqualTo(daprPort);
+	void negotiationTypeDefault() {
+		assertThat(binderProperties.getManagedChannel().getNegotiationType())
+				.isEqualTo(DaprBinderConfigurationProperties.NegotiationType.PLAINTEXT);
 	}
 }
