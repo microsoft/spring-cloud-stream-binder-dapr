@@ -4,7 +4,7 @@
 package com.azure.spring.cloud.stream.binder.dapr.properties;
 
 /**
- * The Dapr consumer binding configuration properties.
+ * Extended consumer properties for Dapr binder.
  */
 public class DaprConsumerProperties {
 }

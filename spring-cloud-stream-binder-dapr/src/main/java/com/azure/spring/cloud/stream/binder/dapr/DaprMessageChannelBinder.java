@@ -24,8 +24,7 @@ import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHandler;
 
 /**
- * {@link DaprMessageChannelBinder} extend the AbstractMessageChannelBinder class.
- * Providing the required constructors and overriding the inherited abstract methods.
+ * A {@link org.springframework.cloud.stream.binder.Binder} implementation backed by Dapr.
  */
 public class DaprMessageChannelBinder extends
 		AbstractMessageChannelBinder<

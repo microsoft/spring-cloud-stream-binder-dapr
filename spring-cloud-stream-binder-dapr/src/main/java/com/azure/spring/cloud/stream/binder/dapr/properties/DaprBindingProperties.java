@@ -6,17 +6,17 @@ package com.azure.spring.cloud.stream.binder.dapr.properties;
 import org.springframework.cloud.stream.binder.BinderSpecificPropertiesProvider;
 
 /**
- * The Dapr binding configuration properties.
+ * Container object for Dapr specific extended producer and consumer binding properties.
  */
 public class DaprBindingProperties implements BinderSpecificPropertiesProvider {
 
 	/**
-	 * The Dapr consumer binding configuration properties.
+	 * Consumer specific binding properties. @see {@link DaprConsumerProperties}.
 	 */
 	private DaprConsumerProperties consumer = new DaprConsumerProperties();
 
 	/**
-	 * The Dapr producer binding configuration properties.
+	 * Producer specific binding properties. @see {@link DaprProducerProperties}.
 	 */
 	private DaprProducerProperties producer = new DaprProducerProperties();
 

@@ -4,12 +4,12 @@
 package com.azure.spring.cloud.stream.binder.dapr.properties;
 
 /**
- * The Dapr producer binding configuration properties.
+ * Extended producer properties for Dapr binder.
  */
 public class DaprProducerProperties {
 
 	/**
-	 * the name of the dapr pubsub component.
+	 * the name of the Dapr pub/sub component.
 	 */
 	private String pubsubName;
 

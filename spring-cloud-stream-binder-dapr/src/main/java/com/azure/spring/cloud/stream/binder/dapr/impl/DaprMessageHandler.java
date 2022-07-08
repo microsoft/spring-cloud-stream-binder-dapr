@@ -16,7 +16,9 @@ import org.springframework.messaging.Message;
 import org.springframework.util.Assert;
 
 /**
- * The {@link DaprMessageHandler} wraps a {@link DaprGrpc.DaprStub} to publish events.
+ * Base class of outbound adapter to publish to Dapr backed messaging service
+ *
+ * It delegates to {@link DaprGrpc.DaprStub} to publish event.
  */
 public class DaprMessageHandler extends AbstractMessageProducingHandler {
 	private static final Logger LOGGER = LoggerFactory.getLogger(DaprMessageHandler.class);
@@ -65,7 +67,7 @@ public class DaprMessageHandler extends AbstractMessageProducingHandler {
 
 			@Override
 			public void onError(Throwable throwable) {
-				LOGGER.error("Failed to publish event: {}", throwable.getMessage());
+				LOGGER.error("Failed to publish event" + throwable.fillInStackTrace());
 			}
 
 			@Override
