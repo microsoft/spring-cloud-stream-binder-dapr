@@ -10,61 +10,38 @@ import io.dapr.v1.DaprProtos;
 import org.junit.jupiter.api.Test;
 
 import org.springframework.messaging.Message;
-import org.springframework.messaging.MessageHeaders;
+import org.springframework.messaging.support.MessageBuilder;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
 
-public class DaprMessageConverterTests {
+class DaprMessageConverterTests {
 
 	@Test
 	public void testConvertCustomHeadersToDaprRequestBuilder() {
-		Map<String, Object> headerMap = new HashMap<>();
 		Map<String, String> brokerMetadata = new HashMap<>();
 		brokerMetadata.put("partitionKey", "fake-partiton-key");
-		headerMap.put(DaprHeaders.CONTENT_TYPE, "fake-content-type");
-		headerMap.put(DaprHeaders.RAW_PAY_LOAD, true);
-		headerMap.put(DaprHeaders.TTL_IN_SECONDS, 20);
-		headerMap.put(DaprHeaders.SPECIFIED_BROKER_METADATA, brokerMetadata);
-		MessageHeaders headers = new MessageHeaders(headerMap);
-		Message message = new Message() {
-			@Override
-			public Object getPayload() {
-				return null;
-			}
-
-			@Override
-			public MessageHeaders getHeaders() {
-				return headers;
-			}
-		};
+		Message<String> message = MessageBuilder.withPayload("testPayload")
+				.setHeader(DaprHeaders.CONTENT_TYPE, "fake-content-type")
+				.setHeader(DaprHeaders.RAW_PAYLOAD, true)
+				.setHeader(DaprHeaders.TTL_IN_SECONDS, 20)
+				.setHeader(DaprHeaders.SPECIFIED_BROKER_METADATA, brokerMetadata).build();
 		DaprMessageConverter converter = new DaprMessageConverter();
 		DaprProtos.PublishEventRequest.Builder builder = converter.fromMessage(message);
 		assertThat(builder.getMetadataCount()).isEqualTo(3);
 		assertThat(builder.getDataContentType()).isEqualTo("fake-content-type");
-		assertThat(builder.getMetadataOrThrow(DaprHeaders.RAW_PAY_LOAD)).isEqualTo("true");
+		assertThat(builder.getMetadataOrThrow(DaprHeaders.RAW_PAYLOAD)).isEqualTo("true");
 		assertThat(builder.getMetadataOrThrow(DaprHeaders.TTL_IN_SECONDS)).isEqualTo("20");
 		assertThat(builder.getMetadataOrThrow("partitionKey")).isEqualTo("fake-partiton-key");
 	}
 
 	@Test
 	public void testUnsupportHeadersToDaprRequestBuilder() {
-		Map<String, Object> headerMap = new HashMap<>();
-		headerMap.put("fake-header", "fake-value");
-		MessageHeaders headers = new MessageHeaders(headerMap);
-		Message message = new Message() {
-			@Override
-			public Object getPayload() {
-				return null;
-			}
-
-			@Override
-			public MessageHeaders getHeaders() {
-				return headers;
-			}
-		};
+		Message<String> message = MessageBuilder.withPayload("testPayload")
+				.setHeader("fake-header", "fake-value").build();
 		DaprMessageConverter converter = new DaprMessageConverter();
 		DaprProtos.PublishEventRequest.Builder builder = converter.fromMessage(message);
 		assertThat(builder.getMetadataCount()).isEqualTo(0);
-		assertThat(builder.getMetadataOrDefault("fake-header", "NULL")).isEqualTo("NULL");
+		catchThrowable(() -> builder.getMetadataOrThrow("fake-header"));
 	}
 }
