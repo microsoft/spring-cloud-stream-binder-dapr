@@ -1,0 +1,17 @@
+dapr:
+  client.pubsub.subscriptions:
+    - pubsubName: redis-pubsub
+      topic: topic
+spring:
+  cloud:
+    stream:
+      function:
+        definition: supply
+      bindings:
+        supply-out-0:
+          destination: topic
+      dapr:
+        bindings:
+          supply-out-0:
+            producer:
+              pubsubName: redis-pubsub
