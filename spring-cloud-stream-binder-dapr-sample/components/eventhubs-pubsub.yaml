@@ -10,8 +10,8 @@ spec:
     - name: connectionString
       value: "Endpoint=sb://{EventHubNamespace}.servicebus.windows.net/;SharedAccessKeyName={PolicyName};SharedAccessKey={Key};EntityPath={EventHub}"
     - name: storageAccountName
-      value: "myeventhubstorage"
+      value: "***"
     - name: storageAccountKey
-      value: "112233445566778899"
+      value: "***"
     - name: storageContainerName
-      value: "myeventhubstoragecontainer"
+      value: "***"
