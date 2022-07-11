@@ -1,6 +1,6 @@
 dapr:
   client.pubsub.subscriptions:
-    - pubsubName: redis-pubsub
+    - pubsubName: eventhubs-pubsub
       topic: topic
 spring:
   cloud:
@@ -14,4 +14,4 @@ spring:
         bindings:
           supply-out-0:
             producer:
-              pubsubName: redis-pubsub
+              pubsubName: eventhubs-pubsub
