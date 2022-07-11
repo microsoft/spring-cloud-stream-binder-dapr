@@ -13,7 +13,7 @@ To use Dapr binder, you need to add `spring-cloud-stream-binder-dapr` as a depen
 </dependency>
 ```
 
-Alternatively, you can use the Spring Cloud Stream RabbitMQ Starter, as follows:
+Alternatively, you can use the Spring Cloud Stream Dapr Starter, as follows:
 
 ```xml
 <dependency>
@@ -43,7 +43,7 @@ Specify pubsubName to call the predefined Dapr Pub Sub component.
 
 ## 3. Configuration Options
 
-This section contains the configuration options used by the Apache Kafka binder.
+This section contains the configuration options used by the Dapr binder.
 
 For common configuration options and properties pertaining to the binder, see the [binding properties](https://docs.spring.io/spring-cloud-stream/docs/current/reference/html/#_configuration_options) in core documentation.
 
@@ -174,12 +174,12 @@ Specifies the name of the Pub/Sub component.
 
 The following table illustrates how Dapr message properties are mapped to Spring message headers.
 
-| Dapr<br/>Message<br/>Properties | Spring Message Header Constants       | Type                 | Description                                                                                                                                                                                                                                                           |
-|:--------------------------------|---------------------------------------|----------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| contentType                     | DaprHeaders#CONTENT_TYPE              | String               | The contentType tells Dapr which content type your data adheres to when constructing a CloudEvent envelope.                                                                                                                                                           |
-| ttlInSeconds                    | DaprHeaders#TTL_IN_SECONDS            | Long                 | The number of seconds for the message to expire.                                                                                                                                                                                                                      |
-| rawPayload                      | DaprHeaders#RAW_PAY_LOAD              | Boolean              | Determine if Dapr should publish the event without wrapping it as CloudEvent. Not using CloudEvents disables support for tracing, event deduplication per messageId, content-type metadata, and any other features built using the CloudEvent schema.                 |
-| specifiedBrokerMetadata         | DaprHeaders#SPECIFIED_Broker_METADATA | Map<String, String>  | Some metadata parameters are available based on each pubsub broker component. For example Kafka, you could refer [Kafka per-call metadata fields](https://docs.dapr.io/reference/components-reference/supported-pubsub/setup-apache-kafka/#per-call-metadata-fields). |
+| Dapr<br/>Message<br/>Properties | Spring Message Header Constants       | Type                 | Description                                                                                                                                                                                                                                           |
+|:--------------------------------|---------------------------------------|----------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| contentType                     | DaprHeaders#CONTENT_TYPE              | String               | The contentType tells Dapr which content type your data adheres to when constructing a CloudEvent envelope.                                                                                                                                           |
+| ttlInSeconds                    | DaprHeaders#TTL_IN_SECONDS            | Long                 | The number of seconds for the message to expire.                                                                                                                                                                                                      |
+| rawPayload                      | DaprHeaders#RAW_PAY_LOAD              | Boolean              | Determine if Dapr should publish the event without wrapping it as CloudEvent. Not using CloudEvents disables support for tracing, event deduplication per messageId, content-type metadata, and any other features built using the CloudEvent schema. |
+| specifiedBrokerMetadata         | DaprHeaders#SPECIFIED_Broker_METADATA | Map<String, String>  | Some metadata parameters are available based on each pubsub broker component.                                                                                                                                                                         |
 
 # Appendices
 ## Building
@@ -200,6 +200,11 @@ You can also add `-DskipTests` if you like, to avoid running the tests.
 
 > ***Note:***
 > You can also install Maven (>=3.3.3) yourself and run the `mvn` command in place of `./mvnw` in the examples below.
+
+> ***Note:***
+> Be aware that you might need to increase the amount of memory available to Maven by setting a `MAVEN_OPTS` environment variable with a value like `-Xmx512m -XX:MaxPermSize=128m`.
+We try to cover this in the `.mvn` configuration, so if you find you have to do it to make a build succeed, please raise a ticket to get the settings added to source control.
+
 
 ### Working with the code
 If you don’t have an IDE preference we would recommend that you use [Spring Tools Suite](https://www.springsource.com/developer/sts) or [Eclipse](https://www.eclipse.org) when working with the code. We use the [m2eclipe](https://www.eclipse.org/m2e/) eclipse plugin for maven support. Other IDEs and tools should also work without issue.
