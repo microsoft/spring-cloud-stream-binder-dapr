@@ -10,7 +10,8 @@ import io.grpc.ManagedChannelBuilder;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * The Dapr binder properties.
+ * Configuration properties for the Dapr binder.
+ * The properties in this class are prefixed with <b>spring.cloud.stream.dapr.binder</b>.
  */
 @ConfigurationProperties(prefix = "spring.cloud.stream.dapr.binder")
 public class DaprBinderConfigurationProperties {
@@ -53,6 +54,10 @@ public class DaprBinderConfigurationProperties {
 		this.managedChannel = managedChannel;
 	}
 
+
+	/**
+	 * Dapr managed channel properties.
+	 */
 	public static final class ManagedChannel {
 
 		/**
@@ -334,8 +339,6 @@ public class DaprBinderConfigurationProperties {
 		 * <p>This assumes prior knowledge that the target of this channel is using plaintext.  It will
 		 * not perform HTTP/1.1 upgrades.
 		 */
-		PLAINTEXT;
-		NegotiationType() {
-		}
+		PLAINTEXT
 	}
 }

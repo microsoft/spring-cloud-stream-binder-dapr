@@ -16,8 +16,7 @@ import org.springframework.messaging.Message;
 import org.springframework.util.Assert;
 
 /**
- * Base class of outbound adapter to publish to Dapr backed messaging service
- *
+ * {@link DaprMessageHandler} that provides the logic required to publish event.
  * It delegates to {@link DaprGrpc.DaprStub} to publish event.
  */
 public class DaprMessageHandler extends AbstractMessageProducingHandler {
