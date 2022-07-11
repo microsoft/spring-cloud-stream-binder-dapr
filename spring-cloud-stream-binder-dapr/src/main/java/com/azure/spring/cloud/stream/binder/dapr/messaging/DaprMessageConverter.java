@@ -38,7 +38,7 @@ public class DaprMessageConverter implements DaprConverter<DaprAppCallbackProtos
 
 	@Override
 	public DaprProtos.PublishEventRequest.Builder fromMessage(Message<?> message) {
-		Map<String, Object> copyHeaders  = new HashMap(message.getHeaders());
+		Map<String, Object> copyHeaders = new HashMap(message.getHeaders());
 		DaprProtos.PublishEventRequest.Builder builder = DaprProtos.PublishEventRequest.newBuilder();
 		try {
 			builder.setData(ByteString.copyFrom(objectMapper.writeValueAsBytes(message)));
@@ -47,10 +47,10 @@ public class DaprMessageConverter implements DaprConverter<DaprAppCallbackProtos
 			throw new ConversionException("Failed to convert Spring message to Dapr PublishEventRequest Builder data:" + e);
 		}
 		PropertyMapper propertyMapper = PropertyMapper.get().alwaysApplyingWhenNonNull();
-		propertyMapper.from((String)copyHeaders.remove(DaprHeaders.CONTENT_TYPE)).to(builder::setDataContentType);
+		propertyMapper.from((String) copyHeaders.remove(DaprHeaders.CONTENT_TYPE)).to(builder::setDataContentType);
 		propertyMapper.from((Map<String, String>) copyHeaders.remove(DaprHeaders.SPECIFIED_BROKER_METADATA)).to(builder::putAllMetadata);
 		SUPPORT_MESSAGE_HEADERS.forEach(key ->
-			propertyMapper.from(copyHeaders.remove(key)).whenNonNull().to(value -> builder.putMetadata(key, value.toString()))
+			propertyMapper.from(copyHeaders.remove(key)).to(value -> builder.putMetadata(key, value.toString()))
 		);
 		return builder;
 	}

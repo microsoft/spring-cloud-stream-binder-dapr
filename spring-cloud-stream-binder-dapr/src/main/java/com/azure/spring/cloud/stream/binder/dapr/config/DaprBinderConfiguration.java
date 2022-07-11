@@ -54,22 +54,21 @@ public class DaprBinderConfiguration {
 		else if (negotiationType.equals(DaprBinderConfigurationProperties.NegotiationType.TLS)) {
 			builder.useTransportSecurity();
 		}
-		PropertyMapper propertyMapper = PropertyMapper.get().alwaysApplyingWhenNonNull();
+		PropertyMapper propertyMapper = PropertyMapper.get();
 		PropertyMapper.Source<DaprBinderConfigurationProperties.ManagedChannel> from = propertyMapper.from(managedChannelProperties);
-		from.as(DaprBinderConfigurationProperties.ManagedChannel::getAuthority).to(builder::overrideAuthority);
-		from.as(DaprBinderConfigurationProperties.ManagedChannel::getDefaultLoadBalancingPolicy).to(builder::defaultLoadBalancingPolicy);
-		from.as(DaprBinderConfigurationProperties.ManagedChannel::getDefaultLoadBalancingPolicy).to(builder::defaultLoadBalancingPolicy);
-		from.as(DaprBinderConfigurationProperties.ManagedChannel::getMaxHedgedAttempts).to(builder::maxHedgedAttempts);
-		from.as(DaprBinderConfigurationProperties.ManagedChannel::getMaxInboundMessageSize).to(builder::maxInboundMessageSize);
-		from.as(DaprBinderConfigurationProperties.ManagedChannel::getMaxInboundMetadataSize).to(builder::maxInboundMetadataSize);
-		from.as(DaprBinderConfigurationProperties.ManagedChannel::getMaxRetryAttempts).to(builder::maxRetryAttempts);
-		from.as(DaprBinderConfigurationProperties.ManagedChannel::getMaxTraceEvents).to(builder::maxTraceEvents);
-		from.as(DaprBinderConfigurationProperties.ManagedChannel::getIdleTimeout).to(x -> builder.idleTimeout(x, TimeUnit.MINUTES));
-		from.as(DaprBinderConfigurationProperties.ManagedChannel::getKeepAliveTime).to(x -> builder.keepAliveTime(x, TimeUnit.MINUTES));
-		from.as(DaprBinderConfigurationProperties.ManagedChannel::getKeepAliveTimeout).to(x -> builder.keepAliveTimeout(x, TimeUnit.SECONDS));
-		from.as(DaprBinderConfigurationProperties.ManagedChannel::getPerRpcBufferLimit).to(builder::perRpcBufferLimit);
-		from.as(DaprBinderConfigurationProperties.ManagedChannel::getRetryBufferSize).to(builder::retryBufferSize);
-		from.as(DaprBinderConfigurationProperties.ManagedChannel::isKeepAliveWithoutCalls).to(builder::keepAliveWithoutCalls);
+		from.as(DaprBinderConfigurationProperties.ManagedChannel::getAuthority).whenNonNull().to(builder::overrideAuthority);
+		from.as(DaprBinderConfigurationProperties.ManagedChannel::getDefaultLoadBalancingPolicy).whenNonNull().to(builder::defaultLoadBalancingPolicy);
+		from.as(DaprBinderConfigurationProperties.ManagedChannel::getMaxHedgedAttempts).whenNonNull().to(builder::maxHedgedAttempts);
+		from.as(DaprBinderConfigurationProperties.ManagedChannel::getMaxInboundMessageSize).whenNonNull().to(builder::maxInboundMessageSize);
+		from.as(DaprBinderConfigurationProperties.ManagedChannel::getMaxInboundMetadataSize).whenNonNull().to(builder::maxInboundMetadataSize);
+		from.as(DaprBinderConfigurationProperties.ManagedChannel::getMaxRetryAttempts).whenNonNull().to(builder::maxRetryAttempts);
+		from.as(DaprBinderConfigurationProperties.ManagedChannel::getMaxTraceEvents).whenNonNull().to(builder::maxTraceEvents);
+		from.as(DaprBinderConfigurationProperties.ManagedChannel::getIdleTimeout).whenNonNull().to(x -> builder.idleTimeout(x, TimeUnit.MINUTES));
+		from.as(DaprBinderConfigurationProperties.ManagedChannel::getKeepAliveTime).whenNonNull().to(x -> builder.keepAliveTime(x, TimeUnit.MINUTES));
+		from.as(DaprBinderConfigurationProperties.ManagedChannel::getKeepAliveTimeout).whenNonNull().to(x -> builder.keepAliveTimeout(x, TimeUnit.SECONDS));
+		from.as(DaprBinderConfigurationProperties.ManagedChannel::getPerRpcBufferLimit).whenNonNull().to(builder::perRpcBufferLimit);
+		from.as(DaprBinderConfigurationProperties.ManagedChannel::getRetryBufferSize).whenNonNull().to(builder::retryBufferSize);
+		from.as(DaprBinderConfigurationProperties.ManagedChannel::isKeepAliveWithoutCalls).whenNonNull().to(builder::keepAliveWithoutCalls);
 		managedChannelBuilderCustomizers.stream().forEach(channelBuilderCustomizer -> channelBuilderCustomizer.customize(builder));
 		return builder;
 	}
