@@ -16,6 +16,7 @@ import com.google.protobuf.ByteString;
 import io.dapr.v1.DaprAppCallbackProtos;
 import io.dapr.v1.DaprProtos;
 
+import org.springframework.boot.context.properties.PropertyMapper;
 import org.springframework.cloud.stream.converter.ConversionException;
 import org.springframework.messaging.Message;
 
@@ -37,7 +38,7 @@ public class DaprMessageConverter implements DaprConverter<DaprAppCallbackProtos
 
 	@Override
 	public DaprProtos.PublishEventRequest.Builder fromMessage(Message<?> message) {
-		Map<String, Object> copyHeaders  = new HashMap(message.getHeaders());
+		Map<String, Object> copyHeaders = new HashMap(message.getHeaders());
 		DaprProtos.PublishEventRequest.Builder builder = DaprProtos.PublishEventRequest.newBuilder();
 		try {
 			builder.setData(ByteString.copyFrom(objectMapper.writeValueAsBytes(message)));
@@ -45,23 +46,12 @@ public class DaprMessageConverter implements DaprConverter<DaprAppCallbackProtos
 		catch (JsonProcessingException e) {
 			throw new ConversionException("Failed to convert Spring message to Dapr PublishEventRequest Builder data:" + e);
 		}
-		String contentType = (String) copyHeaders.get(DaprHeaders.CONTENT_TYPE);
-		if (contentType != null) {
-			builder.setDataContentType(contentType);
-		}
-		copyHeaders.remove(DaprHeaders.CONTENT_TYPE);
-		Map<String, String> brokerMetadatas = (Map<String, String>) copyHeaders.get(DaprHeaders.SPECIFIED_BROKER_METADATA);
-		if (brokerMetadatas != null && !brokerMetadatas.isEmpty()) {
-			builder.putAllMetadata(brokerMetadatas);
-		}
-		copyHeaders.remove(DaprHeaders.SPECIFIED_BROKER_METADATA);
-		SUPPORT_MESSAGE_HEADERS.forEach(key -> {
-			Object value = copyHeaders.get(key);
-			if (value != null) {
-				builder.putMetadata(key, value.toString());
-				copyHeaders.remove(key);
-			}
-		});
+		PropertyMapper propertyMapper = PropertyMapper.get().alwaysApplyingWhenNonNull();
+		propertyMapper.from((String) copyHeaders.remove(DaprHeaders.CONTENT_TYPE)).to(builder::setDataContentType);
+		propertyMapper.from((Map<String, String>) copyHeaders.remove(DaprHeaders.SPECIFIED_BROKER_METADATA)).to(builder::putAllMetadata);
+		SUPPORT_MESSAGE_HEADERS.forEach(key ->
+			propertyMapper.from(copyHeaders.remove(key)).to(value -> builder.putMetadata(key, value.toString()))
+		);
 		return builder;
 	}
 

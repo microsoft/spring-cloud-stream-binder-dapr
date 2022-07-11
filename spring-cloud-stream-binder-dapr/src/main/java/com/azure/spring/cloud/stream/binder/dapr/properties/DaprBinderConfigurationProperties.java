@@ -10,7 +10,8 @@ import io.grpc.ManagedChannelBuilder;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * The Dapr binder properties.
+ * Configuration properties for the Dapr binder.
+ * The properties in this class are prefixed with <b>spring.cloud.stream.dapr.binder</b>.
  */
 @ConfigurationProperties(prefix = "spring.cloud.stream.dapr.binder")
 public class DaprBinderConfigurationProperties {
@@ -53,6 +54,10 @@ public class DaprBinderConfigurationProperties {
 		this.managedChannel = managedChannel;
 	}
 
+
+	/**
+	 * Dapr managed channel properties.
+	 */
 	public static final class ManagedChannel {
 
 		/**
@@ -106,7 +111,7 @@ public class DaprBinderConfigurationProperties {
 		 * <p>This method may not work as expected for the current release because retry is not fully
 		 * implemented yet.
 		 */
-		private long retryBufferSize;
+		private Long retryBufferSize;
 
 		/**
 		 * Sets the per RPC buffer limit in bytes used for retry. The RPC is not retriable if its buffer
@@ -117,7 +122,7 @@ public class DaprBinderConfigurationProperties {
 		 * <p>This method may not work as expected for the current release because retry is not fully
 		 * implemented yet.
 		 */
-		private long perRpcBufferLimit;
+		private Long perRpcBufferLimit;
 
 		/**
 		 * Set the duration without ongoing RPCs before going to idle mode.
@@ -129,7 +134,7 @@ public class DaprBinderConfigurationProperties {
 		 * <p>This is an advisory option. Do not rely on any specific behavior related to this option.
 		 *
 		 */
-		private long idleTimeout;
+		private Long idleTimeout;
 
 		/**
 		 * Sets the time without read activity before sending a keepalive ping. An unreasonably small
@@ -141,7 +146,7 @@ public class DaprBinderConfigurationProperties {
 		 * notice when they are causing excessive load. Clients are strongly encouraged to use only as
 		 * small of a value as necessary.
 		 */
-		private long keepAliveTime;
+		private Long keepAliveTime;
 
 		/**
 		 * Sets the time waiting for read activity after sending a keepalive ping. If the time expires
@@ -150,7 +155,7 @@ public class DaprBinderConfigurationProperties {
 		 *
 		 * <p>This value should be at least multiple times the RTT to allow for lost packets.
 		 */
-		private long keepAliveTimeout;
+		private Long keepAliveTimeout;
 
 		/**
 		 * Sets the maximum message size allowed to be received on the channel. If not called,
@@ -162,7 +167,7 @@ public class DaprBinderConfigurationProperties {
 		 * the only known transport to not enforce this is {@code InProcessTransport}.
 		 *
 		 */
-		private int maxInboundMessageSize;
+		private Integer maxInboundMessageSize;
 
 		/**
 		 * Sets the maximum size of metadata allowed to be received. {@code Integer.MAX_VALUE} disables
@@ -175,7 +180,7 @@ public class DaprBinderConfigurationProperties {
 		 * HTTP/2's SETTINGS_MAX_HEADER_LIST_SIZE</a>. It sums the bytes from each entry's key and value,
 		 * plus 32 bytes of overhead per entry.
 		 */
-		private int maxInboundMetadataSize;
+		private Integer maxInboundMetadataSize;
 
 		/**
 		 * Sets the maximum number of retry attempts that may be configured by the service config. If the
@@ -189,7 +194,7 @@ public class DaprBinderConfigurationProperties {
 		 * <p>This method may not work as expected for the current release because retry is not fully
 		 * implemented yet.
 		 */
-		private int maxRetryAttempts;
+		private Integer maxRetryAttempts;
 
 		/**
 		 * Sets the maximum number of hedged attempts that may be configured by the service config. If the
@@ -198,13 +203,13 @@ public class DaprBinderConfigurationProperties {
 		 * <p>This method may not work as expected for the current release because retry is not fully
 		 * implemented yet.
 		 */
-		private int maxHedgedAttempts;
+		private Integer maxHedgedAttempts;
 
 		/**
 		 * Sets the maximum number of channel trace events to keep in the tracer for each channel or
 		 * subchannel. If set to 0, channel tracing is effectively disabled.
 		 */
-		private int maxTraceEvents;
+		private Integer maxTraceEvents;
 
 		public NegotiationType getNegotiationType() {
 			return negotiationType;
@@ -238,83 +243,83 @@ public class DaprBinderConfigurationProperties {
 			this.keepAliveWithoutCalls = keepAliveWithoutCalls;
 		}
 
-		public long getRetryBufferSize() {
+		public Long getRetryBufferSize() {
 			return retryBufferSize;
 		}
 
-		public void setRetryBufferSize(long retryBufferSize) {
+		public void setRetryBufferSize(Long retryBufferSize) {
 			this.retryBufferSize = retryBufferSize;
 		}
 
-		public long getPerRpcBufferLimit() {
+		public Long getPerRpcBufferLimit() {
 			return perRpcBufferLimit;
 		}
 
-		public void setPerRpcBufferLimit(long perRpcBufferLimit) {
+		public void setPerRpcBufferLimit(Long perRpcBufferLimit) {
 			this.perRpcBufferLimit = perRpcBufferLimit;
 		}
 
-		public long getIdleTimeout() {
+		public Long getIdleTimeout() {
 			return idleTimeout;
 		}
 
-		public void setIdleTimeout(long idleTimeout) {
+		public void setIdleTimeout(Long idleTimeout) {
 			this.idleTimeout = idleTimeout;
 		}
 
-		public long getKeepAliveTime() {
+		public Long getKeepAliveTime() {
 			return keepAliveTime;
 		}
 
-		public void setKeepAliveTime(long keepAliveTime) {
+		public void setKeepAliveTime(Long keepAliveTime) {
 			this.keepAliveTime = keepAliveTime;
 		}
 
-		public long getKeepAliveTimeout() {
+		public Long getKeepAliveTimeout() {
 			return keepAliveTimeout;
 		}
 
-		public void setKeepAliveTimeout(long keepAliveTimeout) {
+		public void setKeepAliveTimeout(Long keepAliveTimeout) {
 			this.keepAliveTimeout = keepAliveTimeout;
 		}
 
-		public int getMaxInboundMessageSize() {
+		public Integer getMaxInboundMessageSize() {
 			return maxInboundMessageSize;
 		}
 
-		public void setMaxInboundMessageSize(int maxInboundMessageSize) {
+		public void setMaxInboundMessageSize(Integer maxInboundMessageSize) {
 			this.maxInboundMessageSize = maxInboundMessageSize;
 		}
 
-		public int getMaxInboundMetadataSize() {
+		public Integer getMaxInboundMetadataSize() {
 			return maxInboundMetadataSize;
 		}
 
-		public void setMaxInboundMetadataSize(int maxInboundMetadataSize) {
+		public void setMaxInboundMetadataSize(Integer maxInboundMetadataSize) {
 			this.maxInboundMetadataSize = maxInboundMetadataSize;
 		}
 
-		public int getMaxRetryAttempts() {
+		public Integer getMaxRetryAttempts() {
 			return maxRetryAttempts;
 		}
 
-		public void setMaxRetryAttempts(int maxRetryAttempts) {
+		public void setMaxRetryAttempts(Integer maxRetryAttempts) {
 			this.maxRetryAttempts = maxRetryAttempts;
 		}
 
-		public int getMaxHedgedAttempts() {
+		public Integer getMaxHedgedAttempts() {
 			return maxHedgedAttempts;
 		}
 
-		public void setMaxHedgedAttempts(int maxHedgedAttempts) {
+		public void setMaxHedgedAttempts(Integer maxHedgedAttempts) {
 			this.maxHedgedAttempts = maxHedgedAttempts;
 		}
 
-		public int getMaxTraceEvents() {
+		public Integer getMaxTraceEvents() {
 			return maxTraceEvents;
 		}
 
-		public void setMaxTraceEvents(int maxTraceEvents) {
+		public void setMaxTraceEvents(Integer maxTraceEvents) {
 			this.maxTraceEvents = maxTraceEvents;
 		}
 	}
@@ -334,8 +339,6 @@ public class DaprBinderConfigurationProperties {
 		 * <p>This assumes prior knowledge that the target of this channel is using plaintext.  It will
 		 * not perform HTTP/1.1 upgrades.
 		 */
-		PLAINTEXT;
-		NegotiationType() {
-		}
+		PLAINTEXT
 	}
 }
