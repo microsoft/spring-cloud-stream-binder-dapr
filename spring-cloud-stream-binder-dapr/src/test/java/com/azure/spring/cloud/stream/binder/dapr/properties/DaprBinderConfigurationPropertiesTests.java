@@ -29,7 +29,9 @@ class DaprBinderConfigurationPropertiesTests {
 
 	@Test
 	void negotiationTypeDefault() {
-		assertThat(binderProperties.getManagedChannel().getNegotiationType())
+		DaprBinderConfigurationProperties.ManagedChannel managedChannel = binderProperties.getManagedChannel();
+		assertThat(managedChannel).isNotNull();
+		assertThat(managedChannel.getNegotiationType())
 				.isEqualTo(DaprBinderConfigurationProperties.NegotiationType.PLAINTEXT);
 	}
 }
