@@ -9,15 +9,15 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * Dapr server auto configuration
+ * Dapr server auto configuration.
  */
 @EnableConfigurationProperties({ DaprServerProperties.class })
 @Configuration
 public class DaprServerAutoConfiguration {
 
-    @ConditionalOnMissingBean
-    @Bean
+	@ConditionalOnMissingBean
+	@Bean
 	DaprSpringService daprSpringService(DaprServerProperties clientProperties) {
-        return new DaprSpringService(clientProperties);
-    }
+		return new DaprSpringService(clientProperties);
+	}
 }

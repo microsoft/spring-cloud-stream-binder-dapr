@@ -9,50 +9,50 @@ import java.util.List;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * Dapr server properties
+ * Dapr server properties.
  */
 @ConfigurationProperties(prefix = "dapr.client")
 public class DaprServerProperties {
-    private Pubsub pubsub;
+	private Pubsub pubsub;
 
-    public Pubsub getPubsub() {
-        return pubsub;
-    }
+	public Pubsub getPubsub() {
+		return pubsub;
+	}
 
-    public void setPubsub(Pubsub pubsub) {
-        this.pubsub = pubsub;
-    }
+	public void setPubsub(Pubsub pubsub) {
+		this.pubsub = pubsub;
+	}
 
-    public static class Pubsub{
-        private List<Subscription> subscriptions = new ArrayList<>();
+	public static class Pubsub {
+		private List<Subscription> subscriptions = new ArrayList<>();
 
-        public void setSubscriptions(List<Subscription> subscriptions) {
-            this.subscriptions = subscriptions;
-        }
+		public void setSubscriptions(List<Subscription> subscriptions) {
+			this.subscriptions = subscriptions;
+		}
 
-        public List<Subscription> getSubscriptions() {
-            return subscriptions;
-        }
-    }
+		public List<Subscription> getSubscriptions() {
+			return subscriptions;
+		}
+	}
 
-    public static class Subscription{
-        private String pubsubName;
-        private String topic;
+	public static class Subscription {
+		private String pubsubName;
+		private String topic;
 
-        public String getPubsubName() {
-            return pubsubName;
-        }
+		public String getPubsubName() {
+			return pubsubName;
+		}
 
-        public void setPubsubName(String pubsubName) {
-            this.pubsubName = pubsubName;
-        }
+		public void setPubsubName(String pubsubName) {
+			this.pubsubName = pubsubName;
+		}
 
-        public String getTopic() {
-            return topic;
-        }
+		public String getTopic() {
+			return topic;
+		}
 
-        public void setTopic(String topic) {
-            this.topic = topic;
-        }
-    }
+		public void setTopic(String topic) {
+			this.topic = topic;
+		}
+	}
 }
