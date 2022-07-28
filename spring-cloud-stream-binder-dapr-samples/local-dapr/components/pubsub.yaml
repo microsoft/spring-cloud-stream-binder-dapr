@@ -1,0 +1,17 @@
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: eventhubs-pubsub
+  namespace: default
+spec:
+  type: pubsub.azure.eventhubs
+  version: v1
+  metadata:
+    - name: connectionString
+      value: "<AZURE_CONNECTION_STRING>"
+    - name: storageAccountName
+      value: "<AZURE_STORAGE_ACCOUNT_NAME>"
+    - name: storageAccountKey
+      value: "<AZURE_STORAGE_ACCOUNT_KEY>"
+    - name: storageContainerName
+      value: "<AZURE_STORAGE_CONTAINER_NAME>"

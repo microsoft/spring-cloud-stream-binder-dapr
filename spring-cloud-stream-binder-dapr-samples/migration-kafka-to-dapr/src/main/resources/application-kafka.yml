@@ -1,0 +1,14 @@
+spring:
+  cloud:
+    stream:
+      kafka:
+        binder:
+          brokers: ${EVENTHUBS_NAMESPACE_NAME}.servicebus.windows.net:9093
+  kafka:
+    security:
+      protocol: SASL_SSL
+    properties:
+      sasl:
+        mechanism: PLAIN
+        jaas:
+          config: org.apache.kafka.common.security.plain.PlainLoginModule required username="$ConnectionString" password="${CONNECTION_STRING}";

@@ -1,0 +1,21 @@
+spring:
+  cloud:
+    stream:
+      function:
+        definition: supply;consume
+      bindings:
+        supply-out-0:
+          destination: <AZURE_EVENTHUB_NAME>
+        consume-in-0:
+          destination: <AZURE_EVENTHUB_NAME>
+      dapr:
+        bindings:
+          supply-out-0:
+            producer:
+              pubsubName: eventhubs-pubsub
+          consume-in-0:
+            consumer:
+              pubsubName: eventhubs-pubsub
+grpc:
+  server:
+    port: 9091

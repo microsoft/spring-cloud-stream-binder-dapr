@@ -1,0 +1,13 @@
+componentType: pubsub.kafka
+version: v1
+metadata:
+  - name: brokers # Required. Kafka broker connection setting
+    value: "${EVENTHUBS_NAMESPACE_NAME}.servicebus.windows.net:9093"
+  - name: authRequired
+    value: "true"
+  - name: authType # Required.
+    value: "password"
+  - name: saslUsername
+    value: "$ConnectionString"
+  - name: saslPassword
+    value: "${CONNECTION_STRING}"

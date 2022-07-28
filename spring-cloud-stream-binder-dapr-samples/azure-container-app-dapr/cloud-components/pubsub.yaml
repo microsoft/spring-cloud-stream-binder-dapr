@@ -1,0 +1,11 @@
+componentType: pubsub.azure.eventhubs
+version: v1
+metadata:
+  - name: connectionString
+    value: "<CONNECTION_STRING>"
+  - name: storageAccountName
+    value: "<STORAGE_ACCOUNT_NAME>"
+  - name: storageAccountKey
+    value: "STORAGE_ACCOUNT_KEY"
+  - name: storageContainerName
+    value: "STORAGE_CONTAINER_NAME"
