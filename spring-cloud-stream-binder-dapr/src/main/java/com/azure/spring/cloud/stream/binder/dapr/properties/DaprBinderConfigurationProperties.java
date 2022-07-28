@@ -30,6 +30,11 @@ public class DaprBinderConfigurationProperties {
 	 */
 	private ManagedChannel managedChannel = new ManagedChannel();
 
+	/**
+	 * Dapr managed channel properties.
+	 */
+	private DaprStub daprStub = new DaprStub();
+
 	public String getDaprIp() {
 		return daprIp;
 	}
@@ -54,6 +59,13 @@ public class DaprBinderConfigurationProperties {
 		this.managedChannel = managedChannel;
 	}
 
+	public DaprStub getDaprStub() {
+		return daprStub;
+	}
+
+	public void setDaprStub(DaprStub daprStub) {
+		this.daprStub = daprStub;
+	}
 
 	/**
 	 * Dapr managed channel properties.
@@ -321,6 +333,56 @@ public class DaprBinderConfigurationProperties {
 
 		public void setMaxTraceEvents(Integer maxTraceEvents) {
 			this.maxTraceEvents = maxTraceEvents;
+		}
+	}
+
+	/**
+	 * Dapr stub properties.
+	 */
+	public static final class DaprStub {
+		/**
+		 * Limits the maximum acceptable message size from a remote peer.
+		 *
+		 * <p>If unset, the {@link ManagedChannel#maxInboundMessageSize} limit is used.
+		 */
+		private Integer maxInboundMessageSize;
+
+		/**
+		 * Limits the maximum acceptable message size to send a remote peer.
+		 */
+		private Integer maxOutboundMessageSize;
+
+		/**
+		 *  Set's the compressor name to use for the call.  It is the responsibility of the application
+		 *  to make sure the server supports decoding the compressor picked by the client.  To be clear,
+		 *  this is the compressor used by the stub to compress messages to the server.  To get
+		 *  compressed responses from the server, set the appropriate {@link io.grpc.DecompressorRegistry}
+		 *  on the {@link io.grpc.ManagedChannelBuilder}.
+		 */
+		private String compression;
+
+		public Integer getMaxInboundMessageSize() {
+			return maxInboundMessageSize;
+		}
+
+		public void setMaxInboundMessageSize(Integer maxInboundMessageSize) {
+			this.maxInboundMessageSize = maxInboundMessageSize;
+		}
+
+		public Integer getMaxOutboundMessageSize() {
+			return maxOutboundMessageSize;
+		}
+
+		void setMaxOutboundMessageSize(Integer maxOutboundMessageSize) {
+			this.maxOutboundMessageSize = maxOutboundMessageSize;
+		}
+
+		public String getCompression() {
+			return compression;
+		}
+
+		public void setCompression(String compression) {
+			this.compression = compression;
 		}
 	}
 

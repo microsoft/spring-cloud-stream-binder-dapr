@@ -66,7 +66,7 @@ public class DaprMessageHandler extends AbstractMessageProducingHandler {
 
 			@Override
 			public void onError(Throwable throwable) {
-				LOGGER.error("Failed to publish event" + throwable.fillInStackTrace());
+				LOGGER.error("Failed to publish event " + throwable.fillInStackTrace());
 			}
 
 			@Override
