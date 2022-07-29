@@ -30,7 +30,7 @@ class DaprMessageHandlerTests {
 		valueMap.put("key1", "value1");
 		valueMap.put("key2", "value2");
 
-		Message<?> message = new GenericMessage<>("testPayload", valueMap);
+		Message<?> message = new GenericMessage<>("testPayload".getBytes(), valueMap);
 		DaprMessageConverter daprMessageConverter = new DaprMessageConverter();
 		DaprGrpc.DaprStub daprStub = mock(DaprGrpc.DaprStub.class);
 		DaprMessageHandler daprMessageHandler = new DaprMessageHandler(topic, pubsubName, daprStub, daprMessageConverter);

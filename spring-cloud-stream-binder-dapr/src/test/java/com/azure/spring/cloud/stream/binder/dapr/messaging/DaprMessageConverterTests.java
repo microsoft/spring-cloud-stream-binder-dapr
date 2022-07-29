@@ -21,7 +21,7 @@ class DaprMessageConverterTests {
 	public void testConvertCustomHeadersToDaprRequestBuilder() {
 		Map<String, String> brokerMetadata = new HashMap<>();
 		brokerMetadata.put("partitionKey", "fake-partiton-key");
-		Message<String> message = MessageBuilder.withPayload("testPayload")
+		Message<?> message = MessageBuilder.withPayload("testPayload".getBytes())
 				.setHeader(DaprHeaders.CONTENT_TYPE, "fake-content-type")
 				.setHeader(DaprHeaders.RAW_PAYLOAD, true)
 				.setHeader(DaprHeaders.TTL_IN_SECONDS, 20)
@@ -37,7 +37,7 @@ class DaprMessageConverterTests {
 
 	@Test
 	public void testUnsupportHeadersToDaprRequestBuilder() {
-		Message<String> message = MessageBuilder.withPayload("testPayload")
+		Message<?> message = MessageBuilder.withPayload("testPayload".getBytes())
 				.setHeader("fake-header", "fake-value").build();
 		DaprMessageConverter converter = new DaprMessageConverter();
 		DaprProtos.PublishEventRequest.Builder builder = converter.fromMessage(message);

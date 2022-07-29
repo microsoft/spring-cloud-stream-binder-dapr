@@ -3,11 +3,12 @@
 
 package com.azure.spring.cloud.stream.binder.dapr.messaging;
 
-import java.util.Map;
+import java.io.IOException;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import org.springframework.lang.Nullable;
 import org.springframework.messaging.Message;
-import org.springframework.messaging.MessageHeaders;
 
 /**
  * A converter to turn a {@link Message} from serialized form to a typed Object and vice versa.
@@ -24,19 +25,15 @@ public interface DaprConverter<I, O> {
 	 * @return the result of the conversion, or {@code null} if the converter cannot perform the conversion.
 	 */
 	@Nullable
-	O fromMessage(Message<?> message);
+	I fromMessage(Message<?> message) throws JsonProcessingException;
 
 	/**
 	 * Create a {@link Message} whose payload is the result of converting the given
-	 * payload Object to serialized form. The optional {@link MessageHeaders} parameter
-	 * may contain additional headers to be added to the message.
+	 * payload Object to serialized form.
 	 * @param daprMessage the Object to convert
-	 * @param headers optional headers for the message
-	 * @param targetPayloadClass the target payload class for the conversion
-	 * @param <U> payload class type in message
 	 * @return the new message, or {@code null} if the converter does not support the
 	 * Object type or the target media type
 	 */
 	@Nullable
-	<U> Message<U> toMessage(I daprMessage, Map<String, Object> headers, Class<U> targetPayloadClass);
+	Message toMessage(O daprMessage) throws IOException;
 }

@@ -8,6 +8,7 @@ import com.azure.spring.cloud.stream.binder.dapr.properties.DaprBinderConfigurat
 import com.azure.spring.cloud.stream.binder.dapr.properties.DaprExtendedBindingProperties;
 import com.azure.spring.cloud.stream.binder.dapr.properties.DaprProducerProperties;
 import com.azure.spring.cloud.stream.binder.dapr.provisioning.DaprBinderProvisioner;
+import com.azure.spring.cloud.stream.binder.dapr.service.DaprGrpcService;
 import io.dapr.v1.DaprGrpc;
 import org.junit.jupiter.api.Test;
 
@@ -36,6 +37,7 @@ class DaprBinderConfigurationTests {
 	@Test
 	void testDefaultConfiguration() {
 		this.contextRunner
+				.withBean(DaprGrpcService.class, () -> mock(DaprGrpcService.class))
 				.run(context -> {
 					assertThat(context).hasSingleBean(DaprBinderConfiguration.class);
 					assertThat(context).hasSingleBean(DaprExtendedBindingProperties.class);
@@ -43,12 +45,14 @@ class DaprBinderConfigurationTests {
 					assertThat(context).hasSingleBean(DaprMessageChannelBinder.class);
 					assertThat(context).hasSingleBean(DaprBinderConfigurationProperties.class);
 					assertThat(context).hasSingleBean(DaprGrpc.DaprStub.class);
+					assertThat(context).hasSingleBean(DaprGrpcService.class);
 				});
 	}
 
 	@Test
 	void testExtendedBindingPropertiesShouldBind() {
 		this.contextRunner
+				.withBean(DaprGrpcService.class, () -> mock(DaprGrpcService.class))
 				.withPropertyValues(
 						"spring.cloud.stream.dapr.bindings.input.producer.pubsub-name=fake-pubsub-name",
 
@@ -68,7 +72,11 @@ class DaprBinderConfigurationTests {
 						"spring.cloud.stream.dapr.binder.managed-channel.maxRetryAttempts=5000",
 						"spring.cloud.stream.dapr.binder.managed-channel.maxTraceEvents=6000",
 						"spring.cloud.stream.dapr.binder.managed-channel.keepAliveWithoutCalls=true",
-						"spring.cloud.stream.dapr.binder.managed-channel.negotiationType=TLS"
+						"spring.cloud.stream.dapr.binder.managed-channel.negotiationType=TLS",
+
+						"spring.cloud.stream.dapr.binder.dapr-stub.maxInboundMessageSize=20",
+						"spring.cloud.stream.dapr.binder.dapr-stub.maxOutboundMessageSize=20",
+						"spring.cloud.stream.dapr.binder.dapr-stub.compression=fake-compression"
 				)
 				.run(context -> {
 					assertThat(context).hasSingleBean(DaprMessageChannelBinder.class);
@@ -95,6 +103,12 @@ class DaprBinderConfigurationTests {
 					assertThat(managedChannel.getMaxTraceEvents()).isEqualTo(6000);
 					assertThat(managedChannel.isKeepAliveWithoutCalls()).isEqualTo(true);
 					assertThat(managedChannel.getNegotiationType()).isEqualTo(DaprBinderConfigurationProperties.NegotiationType.TLS);
+
+					DaprBinderConfigurationProperties.DaprStub daprStub = binderProperties.getDaprStub();
+					assertThat(daprStub.getMaxInboundMessageSize()).isEqualTo(20);
+					assertThat(daprStub.getMaxOutboundMessageSize()).isEqualTo(20);
+					assertThat(daprStub.getCompression()).isEqualTo("fake-compression");
+
 				});
 	}
 }

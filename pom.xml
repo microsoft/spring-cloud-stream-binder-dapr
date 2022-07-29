@@ -19,11 +19,12 @@
 		<mockito-inline.version>4.6.1</mockito-inline.version>
 		<spring-messaging-azure.version>4.3.0</spring-messaging-azure.version>
 		<grpc-netty-shaded.version>1.42.2</grpc-netty-shaded.version>
+		<grpc-server-spring-boot-starter.version>2.13.1.RELEASE</grpc-server-spring-boot-starter.version>
 	</properties>
 	<modules>
 		<module>spring-cloud-stream-binder-dapr</module>
 		<module>spring-cloud-starter-stream-dapr</module>
-		<module>spring-cloud-stream-binder-dapr-sample</module>
+		<module>spring-cloud-stream-binder-dapr-samples</module>
 		<module>spring-cloud-stream-binder-dapr-docs</module>
 	</modules>
 	<dependencyManagement>
@@ -54,6 +55,11 @@
 				<groupId>io.grpc</groupId>
 				<artifactId>grpc-netty-shaded</artifactId>
 				<version>${grpc-netty-shaded.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>net.devh</groupId>
+				<artifactId>grpc-server-spring-boot-starter</artifactId>
+				<version>${grpc-server-spring-boot-starter.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

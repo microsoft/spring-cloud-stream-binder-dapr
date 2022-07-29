@@ -1,0 +1,20 @@
+spring:
+  cloud:
+    stream:
+      dapr:
+        bindings:
+          calculateAverage-out-0:
+            producer:
+              pubsubName: pubsub
+          receive-in-0:
+            consumer:
+              pubsubName: pubsub
+          sendTestData-out-0:
+            producer:
+              pubsubName: pubsub
+          calculateAverage-in-0:
+            consumer:
+              pubsubName: pubsub
+grpc:
+  server:
+    port: 9091
