@@ -33,7 +33,7 @@ Combining spring cloud stream binder and dapr, on the one hand dapr can make up 
 The following simplified diagram shows how the Dapr binder operates:
 
 .Dapr Binder
-image::https://user-images.githubusercontent.com/42743274/176439470-64c42ea4-ebff-48a5-81a3-e3f11bb87387.png[width=300,scaledwidth="50%"]
+image::https://user-images.githubusercontent.com/42743274/176439470-64c42ea4-ebff-48a5-81a3-e3f11bb87387.png[scaledwidth="100%"]
 
 The Dapr Binder implementation maps each destination to a Dapr `Topic`.
 The message is sent to the specified topic, and then get message by subscribing to topic. For each consumer group, a Queue is bound to that `Topic`.

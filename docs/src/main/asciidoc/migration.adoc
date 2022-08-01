@@ -1,0 +1,112 @@
+== Migration Guide
+
+=== 1. Update dependency
+
+Remove `spring-cloud-azure-stream-binder-eventhubs` dependencies.
+
+[source,yaml]
+----
+<dependency>
+  <groupId>com.azure.spring</groupId>
+  <artifactId>spring-cloud-azure-stream-binder-eventhubs</artifactId>
+</dependency>
+----
+Add `spring-cloud-stream-binder-dapr` dependencies.
+
+[source,yaml]
+----
+<dependency>
+  <groupId>com.azure.spring</groupId>
+  <artifactId>spring-cloud-stream-binder-dapr</artifactId>
+</dependency>
+----
+
+=== 2. Update application.yaml
+
+- Remove all configurations prefixed with `spring.cloud.azure.eventhubs.`.
+- Remove all configurations prefixed with `spring.cloud.stream.eventhubs.`.
+- Add configurations prefixed with `spring.cloud.stream.dapr.` and specify pubsubName.
+
+The final pubsub.yaml is as follows:
+
+- `spring.cloud.stream.bindings.<binding>.destination` is configured the topic specified for sending messages.
+- `spring.cloud.stream.dapr.bindings.<binding>.producer.pubsubName` is configured the name of the Pub/Sub component specified for sending messages.
+- `spring.cloud.stream.dapr.bindings.<binding>.consumer.pubsubName` is configured the name of the Pub/Sub component specified for receiving messages.
+[source,yaml]
+----
+spring:
+  cloud:
+    stream:
+      function:
+        definition: supply;consume
+      bindings:
+        supply-out-0:
+          destination: <AZURE_EVENTHUB_NAME>
+        consume-in-0:
+          destination: <AZURE_EVENTHUB_NAME>
+      dapr:
+        bindings:
+          supply-out-0:
+            producer:
+              pubsubName: eventhubs-pubsub
+          consume-in-0:
+            consumer:
+              pubsubName: eventhubs-pubsub
+----
+
+=== 3. Configure Azure Event Hubs component
+
+`Dapr` integrates with `Pub/Sub` message buses to provide applications with the ability to create event-driven, loosely coupled architectures where producers send events to consumers via topics.
+
+`Dapr` supports the configuration of multiple, named, `Pub/Sub components` per application. Each `Pub/Sub component` has a name and this name is used when publishing a message topic.
+
+`Pub/Sub components` are extensible. A list of support `Pub/Sub components` is https://docs.dapr.io/reference/components-reference/supported-pubsub/[here] and the implementations can be found in the https://github.com/dapr/components-contrib[components-contrib repo].
+
+In this example, we configure the `Azure Event Hubs Pub/Sub component` described using the `pubsub.yaml` file:
+
+[source,yaml]
+----
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: eventhubs-pubsub
+spec:
+  type: pubsub.azure.eventhubs
+  version: v1
+  metadata:
+    - name: connectionString
+      value: "<AZURE_CONNECTION_STRING>"
+    - name: storageAccountName
+      value: "<AZURE_STORAGE_ACCOUNT_NAME>"
+    - name: storageAccountKey
+      value: "<AZURE_STORAGE_ACCOUNT_KEY>"
+    - name: storageContainerName
+      value: "<AZURE_STORAGE_CONTAINER_NAME>"
+----
+
+Follow the instructions https://docs.microsoft.com/azure/storage/common/storage-account-keys-manage?tabs=azure-portal[here] to manage the storage account access keys.
+See https://docs.microsoft.com/azure/event-hubs/event-hubs-get-connection-string[here] on how to get the Event Hubs connection string.
+
+
+=== 4. Run application with Dapr sidecar
+
+[source,shell]
+----
+dapr run --app-id dapr-app --app-port 9090 --components-path ${componentsPath}  --app-protocol grpc --dapr-grpc-port ${daprPort} mvn spring-boot:run
+----
+
+This command specifies:
+
+- the id for your application with `--app-id local-dapr`, used for service discovery.
+- the port your application is listening on (default -1) with `--app-port 9090`.
+- the path for components directory with `--components-path ./components`.
+- the protocol (gRPC or HTTP) Dapr with `--app-protocol grpc` uses to talk to the application.
+- the gRPC port for Dapr to listen on (default -1) with `--dapr-grpc-port 50001`
+
+=== 5. Clean Up
+To stop your services from running, simply stop the `dapr run` process. Alternatively, you can spin down your services with the Dapr CLI `dapr stop` command.
+
+[source,shell]
+----
+dapr stop --app-id dapr-app
+----
