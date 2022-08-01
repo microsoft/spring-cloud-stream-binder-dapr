@@ -24,8 +24,8 @@
 	<modules>
 		<module>spring-cloud-stream-binder-dapr</module>
 		<module>spring-cloud-starter-stream-dapr</module>
-		<module>spring-cloud-stream-binder-dapr-samples</module>
-		<module>spring-cloud-stream-binder-dapr-docs</module>
+		<module>samples</module>
+		<module>docs</module>
 	</modules>
 	<dependencyManagement>
 		<dependencies>

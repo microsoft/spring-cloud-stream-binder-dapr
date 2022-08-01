@@ -69,7 +69,7 @@ Specify the profile by configuring `-Pdapr` to load `spring-cloud-stream-binder-
 mvn clean spring-boot:build-image -Pdapr
 ```
 
-Now, we need to migrate the kafka configuration to the dapr component by configuring the `Kafka Pub/Sub component` described using the [pubsub.yaml](./cloud-components/pubsub.yaml) file:
+Now, we need to migrate the kafka configuration to the dapr component by configuring the `Kafka Pub/Sub component` described using the [pubsub.yaml](./cloud-components/kafka-pubsub.yaml) file:
 ```yaml
 componentType: pubsub.kafka
 version: v1
@@ -92,7 +92,7 @@ az containerapp env dapr-component set \
     --name $CONTAINERAPPS_ENVIRONMENT_NAME \
     --resource-group $RESOURCE_GROUP_NAME \
     --dapr-component-name pubsub \
-    --yaml ./cloud-components/pubsub.yaml
+    --yaml ./cloud-components/kafka-pubsub.yaml
 ```
 
 > ***NOTE:***
