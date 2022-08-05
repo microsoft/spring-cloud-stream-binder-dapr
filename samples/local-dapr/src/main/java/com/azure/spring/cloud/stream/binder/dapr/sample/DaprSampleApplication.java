@@ -28,12 +28,12 @@ public class DaprSampleApplication {
 	public Supplier<Message<String>> supply() {
 		return () -> {
 			LOGGER.info("Sending message, sequence " + i);
-			return MessageBuilder.withPayload("").build();
+			return MessageBuilder.withPayload("hello world "+ ++i).build();
 		};
 	}
 
 	@Bean
-	public Consumer<Message<byte[]>> consume() {
+	public Consumer<Message<String>> consume() {
 		return message -> {
 			LOGGER.info("Message received : {}", message.getPayload());
 		};
