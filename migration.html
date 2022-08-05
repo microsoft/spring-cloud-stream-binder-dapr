@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 2.0.10">
+<title>Migration Guide</title>
+<link rel="stylesheet" href="css/spring.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<style>
+.hidden {
+	display: none;
+}
+
+.switch {
+	border-width: 1px 1px 0 1px;
+	border-style: solid;
+	border-color: #7a2518;
+	display: inline-block;
+}
+
+.switch--item {
+	padding: 10px;
+	background-color: #ffffff;
+	color: #7a2518;
+	display: inline-block;
+	cursor: pointer;
+}
+
+.switch--item:not(:first-child) {
+	border-width: 0 0 0 1px;
+	border-style: solid;
+	border-color: #7a2518;
+}
+
+.switch--item.selected {
+	background-color: #7a2519;
+	color: #ffffff;
+}
+
+</style>
+<script type="text/javascript">
+function addBlockSwitches() {
+	for (var primary of document.querySelectorAll('.primary')) {
+		var switchItem = createSwitchItem(primary, createBlockSwitch(primary));
+		switchItem.item.classList.add("selected");
+		var title = primary.querySelector('.title')
+		title.remove();
+	}
+	for (var secondary of document.querySelectorAll('.secondary')) {
+		var primary = findPrimary(secondary);
+		if (primary === null) {
+			console.error("Found secondary block with no primary sibling");
+		}
+		else {
+			var switchItem = createSwitchItem(secondary, primary.querySelector('.switch'));
+			switchItem.content.classList.add("hidden");
+			primary.append(switchItem.content);
+			secondary.remove();
+		}
+	}
+}
+
+function createElementFromHtml(html) {
+	var template = document.createElement('template');
+    template.innerHTML = html;
+    return template.content.firstChild;
+}
+
+function createBlockSwitch(primary) {
+    var blockSwitch = createElementFromHtml('<div class="switch"></div>');
+    primary.prepend(blockSwitch)
+	return blockSwitch;
+}
+
+function findPrimary(secondary) {
+	var candidate = secondary.previousElementSibling;
+	while (candidate != null && !candidate.classList.contains('primary')) {
+		candidate = candidate.previousElementSibling;
+	}
+	return candidate;
+}
+
+function createSwitchItem(block, blockSwitch) {
+	var blockName = block.querySelector('.title').textContent;
+	var content = block.querySelectorAll('.content').item(0);
+	var colist = nextSibling(block, '.colist');
+	if (colist != null) {
+		content.append(colist);
+	}
+	var item = createElementFromHtml('<div class="switch--item">' + blockName + '</div>');
+	item.dataset.blockName = blockName;
+	content.dataset.blockName = blockName;
+	blockSwitch.append(item);
+	return {'item': item, 'content': content};
+}
+
+function nextSibling(element, selector) {
+	var sibling = element.nextElementSibling;
+	while (sibling) {
+		if (sibling.matches(selector)) {
+			return sibling;
+		}
+		sibling = sibling.nextElementSibling;
+	}
+}
+
+function globalSwitch() {
+	document.querySelectorAll(".switch--item").forEach(function(item) {
+		var blockId = blockIdForSwitchItem(item);
+		var handler = function(event) {
+			selectedText = event.target.textContent;
+			window.localStorage.setItem(blockId, selectedText);
+			for (var switchItem of document.querySelectorAll(".switch--item")) {
+				if (blockIdForSwitchItem(switchItem) === blockId && switchItem.textContent === selectedText) {
+					select(switchItem);
+				}
+			}
+		}
+		item.addEventListener("click", handler);
+		if (item.textContent === window.localStorage.getItem(blockId)) {
+			select(item);
+		}
+	});
+}
+
+function select(selected) {
+	for (var child of selected.parentNode.children) {
+		child.classList.remove("selected");
+	}
+	selected.classList.add("selected");
+	for (var child of selected.parentNode.parentNode.children) {
+		if (child.classList.contains("content")) {
+			if (selected.dataset.blockName === child.dataset.blockName) {
+				child.classList.remove("hidden");
+			}
+			else {
+				child.classList.add("hidden");
+			}
+		}
+	}	
+}
+
+function blockIdForSwitchItem(item) {
+	idComponents = []
+	for (var switchItem of item.parentNode.querySelectorAll(".switch--item")) {
+		idComponents.push(switchItem.textContent.toLowerCase());
+	}
+	return idComponents.sort().join("-")
+}
+
+window.onload = function() {
+	addBlockSwitches();
+	globalSwitch();
+};
+
+</script>
+
+</head>
+<body class="book toc2 toc-left">
+<div id="header">
+<div id="toc" class="toc2">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_migration_guide">Migration Guide</a>
+<ul class="sectlevel2">
+<li><a href="#_1_update_dependency">1. Update dependency</a></li>
+<li><a href="#_2_update_application_yaml">2. Update application.yaml</a></li>
+<li><a href="#_3_configure_azure_event_hubs_component">3. Configure Azure Event Hubs component</a></li>
+<li><a href="#_4_run_application_with_dapr_sidecar">4. Run application with Dapr sidecar</a></li>
+<li><a href="#_5_clean_up">5. Clean Up</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_migration_guide"><a class="link" href="#_migration_guide">Migration Guide</a></h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_1_update_dependency"><a class="link" href="#_1_update_dependency">1. Update dependency</a></h3>
+<div class="paragraph">
+<p>Remove <code>spring-cloud-azure-stream-binder-eventhubs</code> dependencies.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">&lt;dependency&gt;
+  &lt;groupId&gt;com.azure.spring&lt;/groupId&gt;
+  &lt;artifactId&gt;spring-cloud-azure-stream-binder-eventhubs&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Add <code>spring-cloud-stream-binder-dapr</code> dependencies.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">&lt;dependency&gt;
+  &lt;groupId&gt;com.azure.spring&lt;/groupId&gt;
+  &lt;artifactId&gt;spring-cloud-stream-binder-dapr&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_2_update_application_yaml"><a class="link" href="#_2_update_application_yaml">2. Update application.yaml</a></h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Remove all configurations prefixed with <code>spring.cloud.azure.eventhubs.</code>.</p>
+</li>
+<li>
+<p>Remove all configurations prefixed with <code>spring.cloud.stream.eventhubs.</code>.</p>
+</li>
+<li>
+<p>Add configurations prefixed with <code>spring.cloud.stream.dapr.</code> and specify pubsubName.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The final pubsub.yaml is as follows:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>spring.cloud.stream.bindings.&lt;binding&gt;.destination</code> is configured the topic specified for sending messages.</p>
+</li>
+<li>
+<p><code>spring.cloud.stream.dapr.bindings.&lt;binding&gt;.producer.pubsubName</code> is configured the name of the Pub/Sub component specified for sending messages.</p>
+</li>
+<li>
+<p><code>spring.cloud.stream.dapr.bindings.&lt;binding&gt;.consumer.pubsubName</code> is configured the name of the Pub/Sub component specified for receiving messages.</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>spring:
+  cloud:
+    stream:
+      function:
+        definition: supply;consume
+      bindings:
+        supply-out-0:
+          destination: &lt;AZURE_EVENTHUB_NAME&gt;
+        consume-in-0:
+          destination: &lt;AZURE_EVENTHUB_NAME&gt;
+      dapr:
+        bindings:
+          supply-out-0:
+            producer:
+              pubsubName: eventhubs-pubsub
+          consume-in-0:
+            consumer:
+              pubsubName: eventhubs-pubsub</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_3_configure_azure_event_hubs_component"><a class="link" href="#_3_configure_azure_event_hubs_component">3. Configure Azure Event Hubs component</a></h3>
+<div class="paragraph">
+<p><code>Dapr</code> integrates with <code>Pub/Sub</code> message buses to provide applications with the ability to create event-driven, loosely coupled architectures where producers send events to consumers via topics.</p>
+</div>
+<div class="paragraph">
+<p><code>Dapr</code> supports the configuration of multiple, named, <code>Pub/Sub components</code> per application. Each <code>Pub/Sub component</code> has a name and this name is used when publishing a message topic.</p>
+</div>
+<div class="paragraph">
+<p><code>Pub/Sub components</code> are extensible. A list of support <code>Pub/Sub components</code> is <a href="https://docs.dapr.io/reference/components-reference/supported-pubsub/">here</a> and the implementations can be found in the <a href="https://github.com/dapr/components-contrib">components-contrib repo</a>.</p>
+</div>
+<div class="paragraph">
+<p>In this example, we configure the <code>Azure Event Hubs Pub/Sub component</code> described using the <code>pubsub.yaml</code> file:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: eventhubs-pubsub
+spec:
+  type: pubsub.azure.eventhubs
+  version: v1
+  metadata:
+    - name: connectionString
+      value: "&lt;AZURE_CONNECTION_STRING&gt;"
+    - name: storageAccountName
+      value: "&lt;AZURE_STORAGE_ACCOUNT_NAME&gt;"
+    - name: storageAccountKey
+      value: "&lt;AZURE_STORAGE_ACCOUNT_KEY&gt;"
+    - name: storageContainerName
+      value: "&lt;AZURE_STORAGE_CONTAINER_NAME&gt;"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Follow the instructions <a href="https://docs.microsoft.com/azure/storage/common/storage-account-keys-manage?tabs=azure-portal">here</a> to manage the storage account access keys.
+See <a href="https://docs.microsoft.com/azure/event-hubs/event-hubs-get-connection-string">here</a> on how to get the Event Hubs connection string.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_4_run_application_with_dapr_sidecar"><a class="link" href="#_4_run_application_with_dapr_sidecar">4. Run application with Dapr sidecar</a></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-shell" data-lang="shell">dapr run --app-id dapr-app --app-port 9090 --components-path ${componentsPath}  --app-protocol grpc --dapr-grpc-port ${daprPort} mvn spring-boot:run</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This command specifies:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>the id for your application with <code>--app-id local-dapr</code>, used for service discovery.</p>
+</li>
+<li>
+<p>the port your application is listening on (default -1) with <code>--app-port 9090</code>.</p>
+</li>
+<li>
+<p>the path for components directory with <code>--components-path ./components</code>.</p>
+</li>
+<li>
+<p>the protocol (gRPC or HTTP) Dapr with <code>--app-protocol grpc</code> uses to talk to the application.</p>
+</li>
+<li>
+<p>the gRPC port for Dapr to listen on (default -1) with <code>--dapr-grpc-port 50001</code></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_5_clean_up"><a class="link" href="#_5_clean_up">5. Clean Up</a></h3>
+<div class="paragraph">
+<p>To stop your services from running, simply stop the <code>dapr run</code> process. Alternatively, you can spin down your services with the Dapr CLI <code>dapr stop</code> command.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-shell" data-lang="shell">dapr stop --app-id dapr-app</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script type="text/javascript" src="js/tocbot/tocbot.min.js"></script>
+<script type="text/javascript" src="js/toc.js"></script>
+</body>
+</html>

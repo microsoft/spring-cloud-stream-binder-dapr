@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 2.0.10">
+<title>Reference Guide</title>
+<link rel="stylesheet" href="css/spring.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<style>
+.hidden {
+	display: none;
+}
+
+.switch {
+	border-width: 1px 1px 0 1px;
+	border-style: solid;
+	border-color: #7a2518;
+	display: inline-block;
+}
+
+.switch--item {
+	padding: 10px;
+	background-color: #ffffff;
+	color: #7a2518;
+	display: inline-block;
+	cursor: pointer;
+}
+
+.switch--item:not(:first-child) {
+	border-width: 0 0 0 1px;
+	border-style: solid;
+	border-color: #7a2518;
+}
+
+.switch--item.selected {
+	background-color: #7a2519;
+	color: #ffffff;
+}
+
+</style>
+<script type="text/javascript">
+function addBlockSwitches() {
+	for (var primary of document.querySelectorAll('.primary')) {
+		var switchItem = createSwitchItem(primary, createBlockSwitch(primary));
+		switchItem.item.classList.add("selected");
+		var title = primary.querySelector('.title')
+		title.remove();
+	}
+	for (var secondary of document.querySelectorAll('.secondary')) {
+		var primary = findPrimary(secondary);
+		if (primary === null) {
+			console.error("Found secondary block with no primary sibling");
+		}
+		else {
+			var switchItem = createSwitchItem(secondary, primary.querySelector('.switch'));
+			switchItem.content.classList.add("hidden");
+			primary.append(switchItem.content);
+			secondary.remove();
+		}
+	}
+}
+
+function createElementFromHtml(html) {
+	var template = document.createElement('template');
+    template.innerHTML = html;
+    return template.content.firstChild;
+}
+
+function createBlockSwitch(primary) {
+    var blockSwitch = createElementFromHtml('<div class="switch"></div>');
+    primary.prepend(blockSwitch)
+	return blockSwitch;
+}
+
+function findPrimary(secondary) {
+	var candidate = secondary.previousElementSibling;
+	while (candidate != null && !candidate.classList.contains('primary')) {
+		candidate = candidate.previousElementSibling;
+	}
+	return candidate;
+}
+
+function createSwitchItem(block, blockSwitch) {
+	var blockName = block.querySelector('.title').textContent;
+	var content = block.querySelectorAll('.content').item(0);
+	var colist = nextSibling(block, '.colist');
+	if (colist != null) {
+		content.append(colist);
+	}
+	var item = createElementFromHtml('<div class="switch--item">' + blockName + '</div>');
+	item.dataset.blockName = blockName;
+	content.dataset.blockName = blockName;
+	blockSwitch.append(item);
+	return {'item': item, 'content': content};
+}
+
+function nextSibling(element, selector) {
+	var sibling = element.nextElementSibling;
+	while (sibling) {
+		if (sibling.matches(selector)) {
+			return sibling;
+		}
+		sibling = sibling.nextElementSibling;
+	}
+}
+
+function globalSwitch() {
+	document.querySelectorAll(".switch--item").forEach(function(item) {
+		var blockId = blockIdForSwitchItem(item);
+		var handler = function(event) {
+			selectedText = event.target.textContent;
+			window.localStorage.setItem(blockId, selectedText);
+			for (var switchItem of document.querySelectorAll(".switch--item")) {
+				if (blockIdForSwitchItem(switchItem) === blockId && switchItem.textContent === selectedText) {
+					select(switchItem);
+				}
+			}
+		}
+		item.addEventListener("click", handler);
+		if (item.textContent === window.localStorage.getItem(blockId)) {
+			select(item);
+		}
+	});
+}
+
+function select(selected) {
+	for (var child of selected.parentNode.children) {
+		child.classList.remove("selected");
+	}
+	selected.classList.add("selected");
+	for (var child of selected.parentNode.parentNode.children) {
+		if (child.classList.contains("content")) {
+			if (selected.dataset.blockName === child.dataset.blockName) {
+				child.classList.remove("hidden");
+			}
+			else {
+				child.classList.add("hidden");
+			}
+		}
+	}	
+}
+
+function blockIdForSwitchItem(item) {
+	idComponents = []
+	for (var switchItem of item.parentNode.querySelectorAll(".switch--item")) {
+		idComponents.push(switchItem.textContent.toLowerCase());
+	}
+	return idComponents.sort().join("-")
+}
+
+window.onload = function() {
+	addBlockSwitches();
+	globalSwitch();
+};
+
+</script>
+
+</head>
+<body class="book toc2 toc-left">
+<div id="header">
+<div id="toc" class="toc2">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_reference_guide">Reference Guide</a>
+<ul class="sectlevel2">
+<li><a href="#_1_usage">1. Usage</a></li>
+<li><a href="#_2_dapr_binder_overview">2. Dapr Binder Overview</a></li>
+<li><a href="#_3_configuration_options">3. Configuration Options</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_reference_guide"><a class="link" href="#_reference_guide">Reference Guide</a></h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_1_usage"><a class="link" href="#_1_usage">1. Usage</a></h3>
+<div class="paragraph">
+<p>To use Dapr binder, you need to add <code>spring-cloud-stream-binder-dapr</code> as a dependency to your Spring Cloud Stream application, as shown in the following example for Maven:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;dependency&gt;
+   &lt;groupId&gt;com.azure.spring&lt;/groupId&gt;
+   &lt;artifactId&gt;spring-cloud-stream-binder-dapr&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Alternatively, you can use the Spring Cloud Stream Dapr Starter, as follows:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;dependency&gt;
+   &lt;groupId&gt;com.azure.spring&lt;/groupId&gt;
+   &lt;artifactId&gt;spring-cloud-starter-stream-dapr&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_2_dapr_binder_overview"><a class="link" href="#_2_dapr_binder_overview">2. Dapr Binder Overview</a></h3>
+<div class="paragraph">
+<p>Dapr uses a modular design where functionality is delivered as a component. Each component has an interface definition, All of the components are pluggable.
+The Pub Sub components provide a common way to interact with different message bus implementations to achieve reliable, high-scale scenarios based on event-driven async communications, while allowing users to opt-in to advanced capabilities using defined metadata.</p>
+</div>
+<div class="paragraph">
+<p>Spring Cloud Stream Binder abstraction makes it possible for a Spring Cloud Stream application to be flexible in how it connects to middleware.</p>
+</div>
+<div class="paragraph">
+<p>Combining spring cloud stream binder and dapr, on the one hand dapr can make up the dependent on a specific middleware library for Spring Cloud Stream, on the other hand, spring cloud stream can help dapr and dapr client decoupling.Therefore, the combination of the two is conducive to the maximum decoupling and enhanced features of both sides.</p>
+</div>
+<div class="paragraph">
+<p>The following simplified diagram shows how the Dapr binder operates:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="https://user-images.githubusercontent.com/42743274/176439470-64c42ea4-ebff-48a5-81a3-e3f11bb87387.png" alt="176439470 64c42ea4 ebff 48a5 81a3 e3f11bb87387">
+</div>
+<div class="title">Figure 1. Dapr Binder</div>
+</div>
+<div class="paragraph">
+<p>The Dapr Binder implementation maps each destination to a Dapr <code>Topic</code>.
+The message is sent to the specified topic, and then get message by subscribing to topic. For each consumer group, a Queue is bound to that <code>Topic</code>.
+Each consumer instance has a corresponding Dapr Consumer instance for its group’s Queue.
+Specify pubsubName to call the predefined Dapr Pub Sub component.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_3_configuration_options"><a class="link" href="#_3_configuration_options">3. Configuration Options</a></h3>
+<div class="paragraph">
+<p>This section contains the configuration options used by the Dapr binder.</p>
+</div>
+<div class="paragraph">
+<p>For common configuration options and properties pertaining to the binder, see the <a href="https://docs.spring.io/spring-cloud-stream/docs/current/reference/html/#_configuration_options">binding properties</a> in core documentation.</p>
+</div>
+<div class="sect3">
+<h4 id="_3_1_dapr_binder_properties"><a class="link" href="#_3_1_dapr_binder_properties">3.1. Dapr Binder Properties</a></h4>
+<div class="paragraph">
+<p>The following properties are available for Dapr binder only and must be prefixed with <code>spring.cloud.stream.dapr.binder.</code>.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">spring.cloud.stream.dapr.binder.daprIp</dt>
+<dd>
+<p>The parameter of the channel, indicating the IP address of the dapr sidecar to which the message is finally sent through the channel.</p>
+<div class="paragraph">
+<p>Default: <code>127.0.0.1</code></p>
+</div>
+</dd>
+<dt class="hdlist1">spring.cloud.stream.dapr.binder.daprPort</dt>
+<dd>
+<p>The parameter of channel, indicating the port that the dapr sidecar to which the message is finally sent through the channel listens.</p>
+<div class="paragraph">
+<p>Default: <code>50001</code></p>
+</div>
+</dd>
+<dt class="hdlist1">spring.cloud.stream.dapr.binder.negotiationType</dt>
+<dd>
+<p>NegotiationType decide which connection method to use. TLS and PLAINTEXT are currently available.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>PLAINTEXT: Use of a plaintext connection to the server. By default a secure connection mechanism such as TLS will be used.
+Should only be used for testing or for APIs where the use of such API or the data exchanged is not sensitive.
+This assumes prior knowledge that the target of this channel is using plaintext. It will not perform HTTP/1.1 upgrades.</p>
+</li>
+<li>
+<p>TLS: Makes the client use TLS.</p>
+<div class="paragraph">
+<p>Default: <code>PLAINTEXT</code></p>
+</div>
+</li>
+</ul>
+</div>
+</dd>
+<dt class="hdlist1">spring.cloud.stream.dapr.binder.authority</dt>
+<dd>
+<p>Overrides the authority used with TLS and HTTP virtual hosting. It does not change what host is actually connected to. Is commonly in the form host:port.</p>
+<div class="paragraph">
+<p>This method is intended for testing, but may safely be used outside of tests as an alternative to DNS overrides.</p>
+</div>
+</dd>
+<dt class="hdlist1">spring.cloud.stream.dapr.binder.defaultLoadBalancingPolicy</dt>
+<dd>
+<p>Sets the default load-balancing policy that will be used if the service config doesn&#8217;t specify one.</p>
+<div class="paragraph">
+<p>This method is implemented by all stock channel builders that are shipped with gRPC, but may not be implemented by custom channel builders, in which case this method will throw.</p>
+</div>
+</dd>
+<dt class="hdlist1">spring.cloud.stream.dapr.binder.idleTimeout</dt>
+<dd>
+<p>Set the duration without ongoing RPCs before going to idle mode.</p>
+<div class="paragraph">
+<p>In idle mode the channel shuts down all connections, the NameResolver and the LoadBalancer. A new RPC would take the channel out of idle mode. A channel starts in idle mode. Defaults to 30 minutes.</p>
+</div>
+<div class="paragraph">
+<p>This is an advisory option. Do not rely on any specific behavior related to this option.</p>
+</div>
+<div class="paragraph">
+<p>TimeUnit: <code>minutes</code></p>
+</div>
+</dd>
+<dt class="hdlist1">spring.cloud.stream.dapr.binder.keepAliveTime</dt>
+<dd>
+<p>Sets the time without read activity before sending a keepalive ping. An unreasonably small value might be increased, and Long.MAX_VALUE nano seconds or an unreasonably large value will disable keepalive. Defaults to infinite.</p>
+<div class="paragraph">
+<p>Clients must receive permission from the service owner before enabling this option. Keepalives can increase the load on services and are commonly "invisible" making it hard to notice when they are causing excessive load. Clients are strongly encouraged to use only as small of a value as necessary.</p>
+</div>
+<div class="paragraph">
+<p>TimeUnit: <code>minutes</code></p>
+</div>
+</dd>
+<dt class="hdlist1">spring.cloud.stream.dapr.binder.keepAliveTimeout</dt>
+<dd>
+<p>Sets the time waiting for read activity after sending a keepalive ping. If the time expires without any read activity on the connection, the connection is considered dead. An unreasonably small value might be increased. Defaults to 20 seconds.</p>
+<div class="paragraph">
+<p>This value should be at least multiple times the RTT to allow for lost packets.</p>
+</div>
+<div class="paragraph">
+<p>TimeUnit: <code>seconds</code></p>
+</div>
+</dd>
+<dt class="hdlist1">spring.cloud.stream.dapr.binder.perRpcBufferLimit</dt>
+<dd>
+<p>Sets the per RPC buffer limit in bytes used for retry. The RPC is not retriable if its buffer limit is exceeded. The implementation may only estimate the buffer size being used rather than count the exact physical memory allocated. It does not have any effect if retry is disabled by the client.</p>
+<div class="paragraph">
+<p>This method may not work as expected for the current release because retry is not fully implemented yet.</p>
+</div>
+</dd>
+<dt class="hdlist1">spring.cloud.stream.dapr.binder.retryBufferSize</dt>
+<dd>
+<p>Sets the retry buffer size in bytes. If the buffer limit is exceeded, no RPC could retry at the moment, and in hedging case all hedges but one of the same RPC will cancel. The implementation may only estimate the buffer size being used rather than count the exact physical memory allocated. The method does not have any effect if retry is disabled by the client.</p>
+<div class="paragraph">
+<p>This method may not work as expected for the current release because retry is not fully implemented yet.</p>
+</div>
+</dd>
+<dt class="hdlist1">spring.cloud.stream.dapr.binder.keepAliveWithoutCalls</dt>
+<dd>
+<p>Sets whether keepalive will be performed when there are no outstanding RPC on a connection. Defaults to false.</p>
+<div class="paragraph">
+<p>Clients must receive permission from the service owner before enabling this option. Keepalives on unused connections can easilly accidentally consume a considerable amount of bandwidth and CPU. <code>idleTimeout()</code> should generally be used instead of this option.</p>
+</div>
+</dd>
+<dt class="hdlist1">spring.cloud.stream.dapr.binder.maxInboundMessageSize</dt>
+<dd>
+<p>Sets the maximum message size allowed to be received on the channel. If not called, defaults to 4 MiB. The default provides protection to clients who haven&#8217;t considered the possibility of receiving large messages while trying to be large enough to not be hit in normal usage.</p>
+<div class="paragraph">
+<p>This method is advisory, and implementations may decide to not enforce this. Currently, the only known transport to not enforce this is InProcessTransport.</p>
+</div>
+</dd>
+<dt class="hdlist1">spring.cloud.stream.dapr.binder.maxInboundMetadataSize</dt>
+<dd>
+<p>Sets the maximum size of metadata allowed to be received. Integer.MAX_VALUE disables the enforcement. The default is implementation-dependent, but is not generally less than 8 KiB and may be unlimited.</p>
+<div class="paragraph">
+<p>This is cumulative size of the metadata. The precise calculation is implementation-dependent, but implementations are encouraged to follow the calculation used for <a href="https://httpwg.org/specs/rfc7540.html#rfc.section.6.5.2">HTTP/2&#8217;s SETTINGS_MAX_HEADER_LIST_SIZE</a> . It sums the bytes from each entry&#8217;s key and value, plus 32 bytes of overhead per entry.</p>
+</div>
+</dd>
+<dt class="hdlist1">spring.cloud.stream.dapr.binder.maxRetryAttempts</dt>
+<dd>
+<p>Sets the maximum number of retry attempts that may be configured by the service config. If the service config specifies a larger value it will be reduced to this value. Setting this number to zero is not effectively the same as disableRetry() because the former does not disable <a href="https://github.com/grpc/proposal/blob/master/A6-client-retries.md#transparent-retries">transparent retry</a> .</p>
+<div class="paragraph">
+<p>This method may not work as expected for the current release because retry is not fully implemented yet.</p>
+</div>
+</dd>
+<dt class="hdlist1">spring.cloud.stream.dapr.binder.maxHedgedAttempts</dt>
+<dd>
+<p>Sets the maximum number of hedged attempts that may be configured by the service config. If the service config specifies a larger value it will be reduced to this value.</p>
+<div class="paragraph">
+<p>This method may not work as expected for the current release because retry is not fully implemented yet.</p>
+</div>
+</dd>
+<dt class="hdlist1">spring.cloud.stream.dapr.binder.maxTraceEvents</dt>
+<dd>
+<p>Sets the maximum number of channel trace events to keep in the tracer for each channel or subchannel. If set to 0, channel tracing is effectively disabled.</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_3_2_dapr_producer_properties"><a class="link" href="#_3_2_dapr_producer_properties">3.2. Dapr Producer Properties</a></h4>
+<div class="paragraph">
+<p>The following properties are available for Dapr producers only and must be prefixed with <code>spring.cloud.stream.dapr.bindings.&lt;bindingTarget&gt;.producer.</code>.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">pubsubName</dt>
+<dd>
+<p>Specifies the name of the Pub/Sub component.</p>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+PubsubName must be specified and has no default value.
+</td>
+</tr>
+</table>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_3_3_dapr_consumer_properties"><a class="link" href="#_3_3_dapr_consumer_properties">3.3. Dapr Consumer Properties</a></h4>
+
+</div>
+<div class="sect3">
+<h4 id="_3_4_dapr_message_headers"><a class="link" href="#_3_4_dapr_message_headers">3.4. Dapr Message Headers</a></h4>
+<div class="paragraph">
+<p>The following table illustrates how Dapr message properties are mapped to Spring message headers.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Dapr Message Properties</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Spring Message Header Constants</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Type</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Description</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">contentType</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">DaprHeaders#CONTENT_TYPE</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The contentType tells Dapr which content type your data adheres to when constructing a CloudEvent envelope.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ttlInSeconds</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">DaprHeaders#TTL_IN_SECONDS</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Long</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The number of seconds for the message to expire.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">rawPayload</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">DaprHeaders#RAW_PAY_LOAD</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Boolean</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Determine if Dapr should publish the event without wrapping it as CloudEvent. Not using CloudEvents disables support for tracing, event deduplication per messageId, content-type metadata, and any other features built using the CloudEvent schema.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">specifiedBrokerMetadata</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">DaprHeaders#SPECIFIED_Broker_METADATA</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Map&lt;String, String&gt;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Some metadata parameters are available based on each pubsub broker component.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script type="text/javascript" src="js/tocbot/tocbot.min.js"></script>
+<script type="text/javascript" src="js/toc.js"></script>
+</body>
+</html>
