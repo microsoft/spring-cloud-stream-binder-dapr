@@ -153,6 +153,14 @@ NOTE: PubsubName must be specified and has no default value.
 
 ==== 3.3. Dapr Consumer Properties
 
+The following properties are available for Dapr consumers only and must be prefixed with `spring.cloud.stream.dapr.bindings.<bindingTarget>.consumer.`.
+
+pubsubName::
+Specifies the name of the Pub/Sub component.
++
+NOTE: PubsubName must be specified and has no default value.
+
+
 ==== 3.4. Dapr Message Headers
 
 The following table illustrates how Dapr message properties are mapped to Spring message headers.

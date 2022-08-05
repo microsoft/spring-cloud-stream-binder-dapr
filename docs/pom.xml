@@ -75,7 +75,7 @@
 										<java classname="org.springframework.cloud.internal.asciidoctor.ReadmeMain"
 											  failonerror="yes" classpathref="${readme.class.path}">
 											<!-- Input -->
-											<arg value="${project.basedir}/src/main/asciidoc/README.adoc"/>
+											<arg value="${project.basedir}/src/main/asciidoc/index.adoc"/>
 											<!-- Output -->
 											<arg value="${main.basedir}/README.adoc"/>
 										</java>
