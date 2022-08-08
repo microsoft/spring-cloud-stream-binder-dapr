@@ -1,27 +1,39 @@
-== Reference Guide
-=== 1. Usage
+== 1. Usage
 
-To use Dapr binder, you need to add `spring-cloud-stream-binder-dapr` as a dependency to your Spring Cloud Stream application, as shown in the following example for Maven:
+
+
+To use `Dapr Binder`, you need to clone this project and deploy it into your local.
+
+[source,shell]
+----
+git clone git@github.com:microsoft/spring-cloud-stream-binder-dapr.git
+./mvnw clean install
+----
+
+
+Then you need add `spring-cloud-stream-binder-dapr` as a dependency to your Spring Cloud Stream application, as shown in the following example for Maven:
 
 [source,xml]
 ----
 <dependency>
    <groupId>com.azure.spring</groupId>
    <artifactId>spring-cloud-stream-binder-dapr</artifactId>
+   <version>1.0.0-SNAPSHOT</version>
 </dependency>
 ----
 
-Alternatively, you can use the Spring Cloud Stream Dapr Starter, as follows:
+Alternatively, you can use the `spring-cloud-starter-stream-dapr`, as follows:
 
 [source,xml]
 ----
 <dependency>
    <groupId>com.azure.spring</groupId>
    <artifactId>spring-cloud-starter-stream-dapr</artifactId>
+   <version>1.0.0-SNAPSHOT</version>
 </dependency>
 ----
 
-=== 2. Dapr Binder Overview
+== 2. Dapr Binder Overview
 
 Dapr uses a modular design where functionality is delivered as a component. Each component has an interface definition, All of the components are pluggable.
 The Pub Sub components provide a common way to interact with different message bus implementations to achieve reliable, high-scale scenarios based on event-driven async communications, while allowing users to opt-in to advanced capabilities using defined metadata.
@@ -40,13 +52,13 @@ The message is sent to the specified topic, and then get message by subscribing 
 Each consumer instance has a corresponding Dapr Consumer instance for its group’s Queue.
 Specify pubsubName to call the predefined Dapr Pub Sub component.
 
-=== 3. Configuration Options
+== 3. Configuration Options
 
 This section contains the configuration options used by the Dapr binder.
 
 For common configuration options and properties pertaining to the binder, see the https://docs.spring.io/spring-cloud-stream/docs/current/reference/html/#_configuration_options[binding properties] in core documentation.
 
-==== 3.1. Dapr Binder Properties
+=== 3.1. Dapr Binder Properties
 
 The following properties are available for Dapr binder only and must be prefixed with `spring.cloud.stream.dapr.binder.`.
 
@@ -142,7 +154,7 @@ This method may not work as expected for the current release because retry is no
 spring.cloud.stream.dapr.binder.maxTraceEvents::
 Sets the maximum number of channel trace events to keep in the tracer for each channel or subchannel. If set to 0, channel tracing is effectively disabled.
 
-==== 3.2. Dapr Producer Properties
+=== 3.2. Dapr Producer Properties
 
 The following properties are available for Dapr producers only and must be prefixed with `spring.cloud.stream.dapr.bindings.<bindingTarget>.producer.`.
 
@@ -151,7 +163,7 @@ Specifies the name of the Pub/Sub component.
 +
 NOTE: PubsubName must be specified and has no default value.
 
-==== 3.3. Dapr Consumer Properties
+=== 3.3. Dapr Consumer Properties
 
 The following properties are available for Dapr consumers only and must be prefixed with `spring.cloud.stream.dapr.bindings.<bindingTarget>.consumer.`.
 
@@ -161,7 +173,7 @@ Specifies the name of the Pub/Sub component.
 NOTE: PubsubName must be specified and has no default value.
 
 
-==== 3.4. Dapr Message Headers
+=== 3.4. Dapr Message Headers
 
 The following table illustrates how Dapr message properties are mapped to Spring message headers.
 

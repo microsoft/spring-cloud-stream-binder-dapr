@@ -7,6 +7,3 @@ include::migration.adoc[]
 == Appendices
 [appendix]
 include::building.adoc[]
-
-[appendix]
-include::contributing.adoc[]

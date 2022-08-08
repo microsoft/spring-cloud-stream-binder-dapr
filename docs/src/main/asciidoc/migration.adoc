@@ -1,6 +1,7 @@
-== Migration Guide
+== 4. Migration Guide
 
-=== 1. Update dependency
+=== 4.1 Migration from Spring Cloud Azure Stream Binder Event Hubs
+==== 1. Update dependency
 
 Remove `spring-cloud-azure-stream-binder-eventhubs` dependencies.
 
@@ -21,7 +22,7 @@ Add `spring-cloud-stream-binder-dapr` dependencies.
 </dependency>
 ----
 
-=== 2. Update application.yaml
+==== 2. Update application.yaml
 
 - Remove all configurations prefixed with `spring.cloud.azure.eventhubs.`.
 - Remove all configurations prefixed with `spring.cloud.stream.eventhubs.`.
@@ -54,7 +55,7 @@ spring:
               pubsubName: eventhubs-pubsub
 ----
 
-=== 3. Configure Azure Event Hubs component
+==== 3. Configure Azure Event Hubs component
 
 `Dapr` integrates with `Pub/Sub` message buses to provide applications with the ability to create event-driven, loosely coupled architectures where producers send events to consumers via topics.
 
@@ -88,7 +89,7 @@ Follow the instructions https://docs.microsoft.com/azure/storage/common/storage-
 See https://docs.microsoft.com/azure/event-hubs/event-hubs-get-connection-string[here] on how to get the Event Hubs connection string.
 
 
-=== 4. Run application with Dapr sidecar
+==== 4. Run application with Dapr sidecar
 
 [source,shell]
 ----
@@ -97,13 +98,13 @@ dapr run --app-id dapr-app --app-port 9090 --components-path ${componentsPath}  
 
 This command specifies:
 
-- the id for your application with `--app-id local-dapr`, used for service discovery.
+- the id for your application with `--app-id dapr-app`, used for service discovery.
 - the port your application is listening on (default -1) with `--app-port 9090`.
 - the path for components directory with `--components-path ./components`.
 - the protocol (gRPC or HTTP) Dapr with `--app-protocol grpc` uses to talk to the application.
 - the gRPC port for Dapr to listen on (default -1) with `--dapr-grpc-port 50001`
 
-=== 5. Clean Up
+==== 5. Clean Up
 To stop your services from running, simply stop the `dapr run` process. Alternatively, you can spin down your services with the Dapr CLI `dapr stop` command.
 
 [source,shell]
