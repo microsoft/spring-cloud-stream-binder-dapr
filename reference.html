@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.10">
-<title>Reference Guide</title>
+<title>1. Usage</title>
 <link rel="stylesheet" href="css/spring.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
@@ -164,11 +164,14 @@ window.onload = function() {
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#_reference_guide">Reference Guide</a>
-<ul class="sectlevel2">
 <li><a href="#_1_usage">1. Usage</a></li>
 <li><a href="#_2_dapr_binder_overview">2. Dapr Binder Overview</a></li>
-<li><a href="#_3_configuration_options">3. Configuration Options</a></li>
+<li><a href="#_3_configuration_options">3. Configuration Options</a>
+<ul class="sectlevel2">
+<li><a href="#_3_1_dapr_binder_properties">3.1. Dapr Binder Properties</a></li>
+<li><a href="#_3_2_dapr_producer_properties">3.2. Dapr Producer Properties</a></li>
+<li><a href="#_3_3_dapr_consumer_properties">3.3. Dapr Consumer Properties</a></li>
+<li><a href="#_3_4_dapr_message_headers">3.4. Dapr Message Headers</a></li>
 </ul>
 </li>
 </ul>
@@ -176,10 +179,8 @@ window.onload = function() {
 </div>
 <div id="content">
 <div class="sect1">
-<h2 id="_reference_guide"><a class="link" href="#_reference_guide">Reference Guide</a></h2>
+<h2 id="_1_usage"><a class="link" href="#_1_usage">1. Usage</a></h2>
 <div class="sectionbody">
-<div class="sect2">
-<h3 id="_1_usage"><a class="link" href="#_1_usage">1. Usage</a></h3>
 <div class="paragraph">
 <p>To use Dapr binder, you need to add <code>spring-cloud-stream-binder-dapr</code> as a dependency to your Spring Cloud Stream application, as shown in the following example for Maven:</p>
 </div>
@@ -203,8 +204,10 @@ window.onload = function() {
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_2_dapr_binder_overview"><a class="link" href="#_2_dapr_binder_overview">2. Dapr Binder Overview</a></h3>
+</div>
+<div class="sect1">
+<h2 id="_2_dapr_binder_overview"><a class="link" href="#_2_dapr_binder_overview">2. Dapr Binder Overview</a></h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>Dapr uses a modular design where functionality is delivered as a component. Each component has an interface definition, All of the components are pluggable.
 The Pub Sub components provide a common way to interact with different message bus implementations to achieve reliable, high-scale scenarios based on event-driven async communications, while allowing users to opt-in to advanced capabilities using defined metadata.</p>
@@ -231,16 +234,18 @@ Each consumer instance has a corresponding Dapr Consumer instance for its groupâ
 Specify pubsubName to call the predefined Dapr Pub Sub component.</p>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_3_configuration_options"><a class="link" href="#_3_configuration_options">3. Configuration Options</a></h3>
+</div>
+<div class="sect1">
+<h2 id="_3_configuration_options"><a class="link" href="#_3_configuration_options">3. Configuration Options</a></h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>This section contains the configuration options used by the Dapr binder.</p>
 </div>
 <div class="paragraph">
 <p>For common configuration options and properties pertaining to the binder, see the <a href="https://docs.spring.io/spring-cloud-stream/docs/current/reference/html/#_configuration_options">binding properties</a> in core documentation.</p>
 </div>
-<div class="sect3">
-<h4 id="_3_1_dapr_binder_properties"><a class="link" href="#_3_1_dapr_binder_properties">3.1. Dapr Binder Properties</a></h4>
+<div class="sect2">
+<h3 id="_3_1_dapr_binder_properties"><a class="link" href="#_3_1_dapr_binder_properties">3.1. Dapr Binder Properties</a></h3>
 <div class="paragraph">
 <p>The following properties are available for Dapr binder only and must be prefixed with <code>spring.cloud.stream.dapr.binder.</code>.</p>
 </div>
@@ -382,8 +387,8 @@ This assumes prior knowledge that the target of this channel is using plaintext.
 </dl>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_3_2_dapr_producer_properties"><a class="link" href="#_3_2_dapr_producer_properties">3.2. Dapr Producer Properties</a></h4>
+<div class="sect2">
+<h3 id="_3_2_dapr_producer_properties"><a class="link" href="#_3_2_dapr_producer_properties">3.2. Dapr Producer Properties</a></h3>
 <div class="paragraph">
 <p>The following properties are available for Dapr producers only and must be prefixed with <code>spring.cloud.stream.dapr.bindings.&lt;bindingTarget&gt;.producer.</code>.</p>
 </div>
@@ -408,12 +413,34 @@ PubsubName must be specified and has no default value.
 </dl>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_3_3_dapr_consumer_properties"><a class="link" href="#_3_3_dapr_consumer_properties">3.3. Dapr Consumer Properties</a></h4>
-
+<div class="sect2">
+<h3 id="_3_3_dapr_consumer_properties"><a class="link" href="#_3_3_dapr_consumer_properties">3.3. Dapr Consumer Properties</a></h3>
+<div class="paragraph">
+<p>The following properties are available for Dapr consumers only and must be prefixed with <code>spring.cloud.stream.dapr.bindings.&lt;bindingTarget&gt;.consumer.</code>.</p>
 </div>
-<div class="sect3">
-<h4 id="_3_4_dapr_message_headers"><a class="link" href="#_3_4_dapr_message_headers">3.4. Dapr Message Headers</a></h4>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">pubsubName</dt>
+<dd>
+<p>Specifies the name of the Pub/Sub component.</p>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+PubsubName must be specified and has no default value.
+</td>
+</tr>
+</table>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_3_4_dapr_message_headers"><a class="link" href="#_3_4_dapr_message_headers">3.4. Dapr Message Headers</a></h3>
 <div class="paragraph">
 <p>The following table illustrates how Dapr message properties are mapped to Spring message headers.</p>
 </div>
@@ -457,7 +484,6 @@ PubsubName must be specified and has no default value.
 </tr>
 </tbody>
 </table>
-</div>
 </div>
 </div>
 </div>
