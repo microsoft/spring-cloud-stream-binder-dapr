@@ -1,2 +1,2 @@
 [[building]]
-This project uses the same parent as `Spring Cloud Stream Binder Kafka`, thus to build it locally, you can refer to https://github.com/spring-cloud/spring-cloud-stream-binder-kafka#appendices[Spring Cloud Stream Binder Kafka].
+In the maven of the project we use `Spring Cloud Stream` as parent, thus to build it locally, you can refer to https://github.com/spring-cloud/spring-cloud-stream#building[Spring Cloud Stream].
