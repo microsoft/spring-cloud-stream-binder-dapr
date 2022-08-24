@@ -18,7 +18,7 @@
 		<dapr-sdk-autogen.version>1.6.0</dapr-sdk-autogen.version>
 		<mockito-inline.version>4.6.1</mockito-inline.version>
 		<spring-messaging-azure.version>4.3.0</spring-messaging-azure.version>
-		<grpc-netty-shaded.version>1.42.2</grpc-netty-shaded.version>
+		<grpc-netty-shaded.version>1.49.0</grpc-netty-shaded.version>
 		<grpc-server-spring-boot-starter.version>2.13.1.RELEASE</grpc-server-spring-boot-starter.version>
 	</properties>
 	<modules>
